@@ -3,99 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Admin Panel | KillerX HWID</title>
+    <title>Premium Multi-App Control Panel | KillerX HWID</title>
     
     <!-- Tailwind & Firebase -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     
-    <!-- Fonts, Icons & SweetAlert (For Premium Popups) -->
+    <!-- Fonts, Icons & SweetAlert -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
         
         body { 
-            font-family: 'Inter', sans-serif; 
+            font-family: 'Outfit', sans-serif; 
             color: #e2e8f0; 
-            background-color: #020617; /* Very Dark Slate */
+            background-color: #080710; /* Ultra Dark background */
+            min-height: 100vh;
             overflow-x: hidden;
             position: relative;
         }
 
-        /* Premium Ambient Glow Effects */
+        /* Ambient Glowing Background Blobs */
         .ambient-blob {
-            position: absolute;
-            filter: blur(120px);
+            position: fixed;
+            filter: blur(140px);
             z-index: -1;
-            opacity: 0.5;
-            animation: float 20s ease-in-out infinite;
+            opacity: 0.45;
+            pointer-events: none;
+            border-radius: 50%;
         }
-        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: rgba(99, 102, 241, 0.3); }
-        .blob-2 { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: rgba(168, 85, 247, 0.2); }
-        
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(5%, 5%); }
-        }
+        .blob-1 { top: -10%; left: -10%; width: 45vw; height: 45vw; background: radial-gradient(circle, #4f46e5 0%, #06b6d4 100%); }
+        .blob-2 { bottom: -10%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, #d946ef 0%, #8b5cf6 100%); }
+        .blob-3 { top: 40%; left: 35%; width: 30vw; height: 30vw; background: radial-gradient(circle, #ec4899 0%, #3b82f6 100%); opacity: 0.2; }
 
-        /* Modern Glassmorphism */
+        /* Premium Cyberpunk / Glassmorphic Panel styling */
         .glass-card { 
-            background: rgba(15, 23, 42, 0.6); 
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.05); 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            background: rgba(13, 12, 24, 0.45); 
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.06); 
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(99, 102, 241, 0.25);
+            box-shadow: 0 25px 60px rgba(99, 102, 241, 0.15), 
+                        inset 0 1px 0 rgba(255, 255, 255, 0.15);
         }
 
         .btn-primary { 
-            background: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
-            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .btn-primary:hover {
-            box-shadow: 0 0 20px rgba(147, 51, 234, 0.4);
+            box-shadow: 0 8px 30px rgba(168, 55, 247, 0.5);
             transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+        .btn-primary:active {
+            transform: translateY(1px);
         }
 
         .input-premium {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
+            background: rgba(5, 5, 12, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .input-premium:focus {
-            border-color: #8b5cf6;
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
-            background: rgba(0, 0, 0, 0.4);
+            border-color: #a855f7;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.5);
+            background: rgba(5, 5, 12, 0.7);
         }
 
-        /* Numpad & Pin */
+        /* Pin screen custom dialer */
         .btn-numpad {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: white;
-            font-size: 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #f1f5f9;
+            font-size: 1.6rem;
             font-weight: 600;
-            border-radius: 1rem;
-            transition: all 0.2s ease;
+            border-radius: 1.25rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+        .btn-numpad:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(168, 85, 247, 0.4);
+            color: #a855f7;
         }
         .btn-numpad:active {
-            transform: scale(0.95);
-            background: rgba(255,255,255,0.15);
+            transform: scale(0.92);
         }
 
         .pin-dot {
-            width: 16px; height: 16px;
+            width: 18px; height: 18px;
             border-radius: 50%;
-            border: 2px solid #8b5cf6;
+            border: 2px solid rgba(255, 255, 255, 0.2);
             background: transparent;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .pin-dot.filled {
             background: #a855f7;
-            box-shadow: 0 0 15px #a855f7;
-            transform: scale(1.2);
+            border-color: #a855f7;
+            box-shadow: 0 0 20px #a855f7, 0 0 40px #a855f7;
+            transform: scale(1.3);
         }
 
         .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
@@ -106,184 +123,324 @@
             40%, 60% { transform: translate3d(8px, 0, 0); }
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
+        /* Beautiful responsive animations */
+        .app-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .app-card:hover {
+            transform: translateY(-8px);
+        }
 
-        /* SweetAlert Custom Dark Theme */
-        .swal2-popup { background: #0f172a !important; color: #f8fafc !important; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 1.5rem !important; }
-        .swal2-title { color: #f8fafc !important; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #6366f1, #a855f7); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a855f7; }
+
+        /* SweetAlert Premium Redesign */
+        .swal2-popup { 
+            background: rgba(15, 12, 28, 0.95) !important; 
+            backdrop-filter: blur(20px) !important;
+            color: #f8fafc !important; 
+            border: 1px solid rgba(168, 85, 247, 0.3) !important; 
+            border-radius: 2rem !important; 
+            box-shadow: 0 20px 50px rgba(168, 85, 247, 0.15) !important;
+        }
+        .swal2-title { color: #f8fafc !important; font-family: 'Outfit', sans-serif !important; }
+        .swal2-html-container { color: #cbd5e1 !important; }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen pb-16">
 
     <!-- Ambient Background Blobs -->
     <div class="ambient-blob blob-1"></div>
     <div class="ambient-blob blob-2"></div>
+    <div class="ambient-blob blob-3"></div>
+
+    <!-- ================== EMERGENCY BYPASS SCREEN ================== -->
+    <div id="bypassScreen" class="fixed inset-0 z-50 hidden flex flex-col items-center justify-center bg-[#030208]/98 backdrop-blur-xl transition-all duration-500">
+        <div class="relative w-80 h-80 flex items-center justify-center">
+            <!-- Cyber Glowing Scanning Rings -->
+            <div class="absolute inset-0 rounded-full border-4 border-dashed border-indigo-500/30 animate-spin" style="animation-duration: 10s;"></div>
+            <div class="absolute inset-4 rounded-full border-4 border-dotted border-purple-500/40 animate-spin" style="animation-duration: 6s; animation-direction: reverse;"></div>
+            <div class="absolute inset-8 rounded-full border-2 border-cyan-500/25 animate-ping"></div>
+            <!-- Center Shield Icon -->
+            <div class="w-40 h-40 bg-gradient-to-tr from-cyan-500 to-indigo-600 rounded-[2.5rem] flex flex-col items-center justify-center shadow-[0_0_60px_rgba(6,182,212,0.4)] border border-cyan-400/30">
+                <i class="fas fa-user-shield text-5xl text-white animate-bounce"></i>
+            </div>
+        </div>
+        <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-400 tracking-wider uppercase mt-8 animate-pulse">Emergency Bypass Active</h2>
+        <p id="bypassStatus" class="text-slate-400 text-xs mt-3 font-mono font-medium tracking-widest uppercase">CONNECTING TO PRIVATE TERMINAL LAYER...</p>
+        
+        <div class="w-64 h-2 bg-white/5 rounded-full overflow-hidden mt-6 border border-white/5 shadow-inner">
+            <div id="bypassBar" class="h-full bg-gradient-to-r from-cyan-500 to-purple-600 w-0 transition-all duration-300"></div>
+        </div>
+    </div>
+
+    <!-- ================== NORMAL LOGIN LOADING SCREEN ================== -->
+    <div id="loginLoadingScreen" class="fixed inset-0 z-50 hidden flex flex-col items-center justify-center bg-[#04030a]/98 backdrop-blur-xl transition-all duration-500">
+        <div class="relative w-72 h-72 flex items-center justify-center">
+            <!-- Glowing Spinning Circles -->
+            <div class="absolute inset-0 rounded-full border-4 border-dashed border-indigo-500/20 animate-spin" style="animation-duration: 8s;"></div>
+            <div class="absolute inset-4 rounded-full border-2 border-purple-500/30 animate-ping"></div>
+            <!-- Center Shield Icon -->
+            <div class="w-32 h-32 bg-gradient-to-tr from-indigo-500 to-purple-600 rounded-3xl flex flex-col items-center justify-center shadow-[0_0_50px_rgba(99,102,241,0.3)] border border-white/10 rotate-6">
+                <i class="fas fa-fingerprint text-4xl text-white animate-pulse"></i>
+            </div>
+        </div>
+        <h2 id="loadingStatus" class="text-2xl font-extrabold text-white tracking-wide uppercase mt-8 animate-pulse">Initializing Session</h2>
+        <p id="loadingMessage" class="text-slate-400 text-xs mt-2 font-mono tracking-widest uppercase">CONTACTING CLOUD SERVER...</p>
+    </div>
 
     <!-- ================== LOGIN SCREEN ================== -->
-    <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-[#020617] backdrop-blur-sm transition-opacity duration-500">
-        <div class="glass-card p-10 rounded-3xl w-full max-w-sm text-center flex flex-col items-center">
-            <div class="w-16 h-16 bg-gradient-to-tr from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(99,102,241,0.4)] rotate-3">
-                <i class="fas fa-fingerprint text-3xl text-white"></i>
-            </div>
-            <h2 class="text-2xl font-bold mb-1 tracking-tight">Security Check</h2>
-            <p class="text-slate-400 text-sm mb-8">Enter Master Passcode</p>
-
-            <div id="pinDots" class="flex gap-5 mb-10">
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
+    <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-[#04030a]/95 backdrop-blur-md transition-opacity duration-500">
+        <div class="glass-card p-8 md:p-12 rounded-[2.5rem] w-full max-w-md border border-white/10 mx-4 relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full blur-[40px] opacity-20"></div>
+            
+            <div class="text-center flex flex-col items-center mb-8">
+                <div class="w-16 h-16 bg-gradient-to-tr from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 shadow-[0_0_30px_rgba(99,102,241,0.4)] border border-white/10 rotate-6">
+                    <i class="fas fa-shield-halved text-2xl text-white"></i>
+                </div>
+                <h2 class="text-3xl font-extrabold tracking-tight text-white">Cloud Authentication</h2>
+                <p class="text-slate-400 text-xs mt-1.5 font-medium">Verify credentials to unlock terminal</p>
             </div>
 
-            <div class="grid grid-cols-3 gap-3 w-full">
-                <button onclick="pressKey(1)" class="btn-numpad py-4">1</button>
-                <button onclick="pressKey(2)" class="btn-numpad py-4">2</button>
-                <button onclick="pressKey(3)" class="btn-numpad py-4">3</button>
-                <button onclick="pressKey(4)" class="btn-numpad py-4">4</button>
-                <button onclick="pressKey(5)" class="btn-numpad py-4">5</button>
-                <button onclick="pressKey(6)" class="btn-numpad py-4">6</button>
-                <button onclick="pressKey(7)" class="btn-numpad py-4">7</button>
-                <button onclick="pressKey(8)" class="btn-numpad py-4">8</button>
-                <button onclick="pressKey(9)" class="btn-numpad py-4">9</button>
-                <button onclick="clearPin()" class="btn-numpad py-4 text-red-400 hover:bg-red-500/10"><i class="fas fa-backspace"></i></button>
-                <button onclick="pressKey(0)" class="btn-numpad py-4">0</button>
-                <div class="py-4"></div>
+            <!-- Login Inputs -->
+            <div class="space-y-5">
+                <div>
+                    <label class="text-[10px] text-slate-400 font-bold uppercase tracking-widest ml-1">Email Address</label>
+                    <div class="relative mt-2">
+                        <i class="fas fa-envelope absolute left-5 top-[18px] text-slate-500 text-sm"></i>
+                        <input type="email" id="loginEmail" placeholder="admin@killerx.com" 
+                            class="w-full input-premium rounded-2xl pl-12 pr-5 py-4 text-white outline-none text-sm font-medium">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[10px] text-slate-400 font-bold uppercase tracking-widest ml-1">Access Password</label>
+                    <div class="relative mt-2">
+                        <i class="fas fa-lock absolute left-5 top-[18px] text-slate-500 text-sm"></i>
+                        <input type="password" id="loginPassword" placeholder="••••••••" 
+                            class="w-full input-premium rounded-2xl pl-12 pr-5 py-4 text-white outline-none text-sm font-medium tracking-wide">
+                    </div>
+                </div>
+
+                <button onclick="attemptLogin()" id="loginBtn" class="w-full btn-primary py-4.5 rounded-2xl font-bold text-white mt-8 flex items-center justify-center gap-2 text-base">
+                    <i class="fas fa-sign-in-alt"></i> Authenticate Session
+                </button>
             </div>
         </div>
     </div>
 
     <!-- ================== MAIN DASHBOARD ================== -->
-    <div id="dashboardScreen" class="hidden p-4 md:p-8 max-w-7xl mx-auto pb-24 relative z-10">
+    <div id="dashboardScreen" class="hidden p-4 md:p-8 max-w-[95%] mx-auto relative z-10">
         
         <!-- Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 glass-card p-6 rounded-2xl gap-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 glass-card p-6 md:p-8 rounded-3xl gap-6">
             <div>
-                <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">Killer<span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">X</span> <span class="font-light text-slate-300">Panel</span></h1>
-                <p class="text-indigo-300/80 text-sm mt-1.5 flex items-center"><i class="fas fa-crown text-yellow-400 mr-2 text-xs"></i> Premium Key Management System</p>
+                <h1 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-none">
+                    Killer<span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400">X</span> 
+                    <span class="font-light text-slate-300">Portal</span>
+                </h1>
+                <p class="text-indigo-300/80 text-sm md:text-base mt-2 flex items-center font-medium">
+                    <i class="fas fa-shield-halved text-cyan-400 mr-2 text-base animate-pulse"></i> Next-Gen Enterprise Multi-Application & Cloud Security Suite
+                </p>
             </div>
-            <div class="flex items-center gap-4">
-                <div class="bg-green-500/10 text-green-400 px-4 py-2.5 rounded-xl text-sm font-medium border border-green-500/20 flex items-center backdrop-blur-sm">
-                    <span class="relative flex h-2.5 w-2.5 mr-2">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+            
+            <div class="flex flex-wrap items-center gap-4 w-full md:w-auto">
+                <button onclick="showCreateAppModal()" class="btn-primary px-6 py-3.5 rounded-2xl text-sm font-semibold flex items-center gap-2 shadow-lg shadow-indigo-500/25 w-full md:w-auto justify-center">
+                    <i class="fas fa-folder-plus text-base"></i> Add Application
+                </button>
+
+                <button onclick="logout()" class="bg-rose-500/10 hover:bg-rose-600 text-rose-400 hover:text-white px-6 py-3.5 rounded-2xl text-sm font-semibold border border-rose-500/20 hover:border-transparent transition-all flex items-center justify-center gap-2 hover:scale-[1.02] shadow-md shadow-rose-950/20 w-full md:w-auto">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+                
+                <div class="bg-emerald-500/10 text-emerald-400 px-5 py-3 rounded-2xl text-sm font-semibold border border-emerald-500/20 flex items-center justify-center w-full md:w-auto backdrop-blur-md">
+                    <span class="relative flex h-3 w-3 mr-2.5">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                     </span>
-                    System Online & Secured
+                    System Online
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            <!-- Left Side: Create Key Form -->
-            <div class="glass-card p-6 rounded-3xl h-fit lg:col-span-1">
-                <h2 class="text-lg font-semibold mb-6 flex items-center text-white border-b border-white/5 pb-4">
-                    <div class="p-2 bg-indigo-500/20 rounded-lg mr-3 border border-indigo-500/20 text-indigo-400"><i class="fas fa-bolt"></i></div>
-                    Generate License
-                </h2>
-                
-                <div class="space-y-5">
-                    <div>
-                        <label class="text-xs text-slate-400 font-medium ml-1 uppercase tracking-wider">User Name</label>
-                        <input type="text" id="userName" placeholder="e.g. Shezin PC" 
-                            class="w-full input-premium rounded-xl px-4 py-3 text-white outline-none mt-1.5">
-                    </div>
+        <!-- ================== APPLICATIONS LIST GRID ================== -->
+        <div id="appsGridSection" class="mb-10">
+            <h2 class="text-2xl font-bold text-white mb-8 flex items-center">
+                <div class="p-2.5 bg-indigo-500/20 rounded-xl mr-3.5 border border-indigo-500/20 text-indigo-400 flex items-center justify-center"><i class="fas fa-cubes text-xl"></i></div>
+                Your Registered Applications
+            </h2>
+            <div id="appsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Dynamically populated app cards -->
+            </div>
+        </div>
 
-                    <div>
-                        <label class="text-xs text-slate-400 font-medium ml-1 uppercase tracking-wider">Pass Key</label>
-                        <div class="relative mt-1.5">
-                            <input type="text" id="newKey" placeholder="KX-XXXX" 
-                                class="w-full input-premium rounded-xl px-4 py-3 text-white outline-none pr-12 font-mono text-sm">
-                            <button onclick="generateRandomKey()" class="absolute right-2 top-2 bottom-2 aspect-square bg-white/5 hover:bg-white/10 rounded-lg text-indigo-400 transition-colors flex items-center justify-center" title="Generate Random">
-                                <i class="fas fa-random text-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="text-xs text-slate-400 font-medium ml-1 uppercase tracking-wider">Validity (Days)</label>
-                        <input type="number" id="days" placeholder="30" value="30"
-                            class="w-full input-premium rounded-xl px-4 py-3 text-white outline-none mt-1.5">
-                    </div>
-
-                    <button onclick="createKey()" class="w-full btn-primary py-3.5 rounded-xl font-semibold text-white mt-4 flex items-center justify-center gap-2">
-                        <i class="fas fa-plus"></i> Create License
+        <!-- ================== SINGLE APPLICATION WORKSPACE (Hidden initially) ================== -->
+        <div id="appWorkspace" class="hidden space-y-8">
+            <!-- Back button and App details header -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center glass-card p-6 md:p-8 rounded-3xl gap-6">
+                <div class="flex items-center gap-5">
+                    <button onclick="goBackToApps()" class="bg-white/5 hover:bg-indigo-500/10 text-white hover:text-indigo-400 p-4 rounded-2xl transition-all border border-white/10 flex items-center justify-center hover:scale-105 shadow-inner">
+                        <i class="fas fa-arrow-left text-lg"></i>
                     </button>
+                    <div>
+                        <h2 id="currentAppNameHeader" class="text-3xl font-extrabold text-white leading-tight">App Workspace</h2>
+                        <p class="text-sm text-slate-400 mt-1 font-medium flex items-center gap-1.5"><i class="fas fa-circle text-emerald-400 text-[8px] animate-pulse"></i> Application database space</p>
+                    </div>
+                </div>
+                
+                <!-- Tab Switching in workspace -->
+                <div class="flex gap-2 bg-black/45 p-2 rounded-2xl border border-white/5 w-full md:w-auto">
+                    <button onclick="switchTab('users')" id="tabBtnUsers" class="flex-1 md:flex-initial px-6 py-3 rounded-xl text-sm font-bold transition-all bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md">Users Table</button>
+                    <button onclick="switchTab('settings')" id="tabBtnSettings" class="flex-1 md:flex-initial px-6 py-3 rounded-xl text-sm font-bold transition-all text-slate-400 hover:text-white">Settings & Updates</button>
                 </div>
             </div>
 
-            <!-- Right Side: Key List Table -->
-            <div class="lg:col-span-3 glass-card rounded-3xl overflow-hidden flex flex-col">
-                <div class="p-6 border-b border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 bg-white/[0.02]">
-                    <div class="flex items-center gap-3">
-                        <h2 class="text-lg font-semibold text-white flex items-center">
-                            <div class="p-2 bg-purple-500/20 rounded-lg mr-3 border border-purple-500/20 text-purple-400"><i class="fas fa-users"></i></div>
-                            Manage Users
-                        </h2>
-                        <span id="keyCount" class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs px-3 py-1 rounded-full font-medium">0 Total</span>
-                    </div>
+            <!-- TAB 1: USERS PANEL -->
+            <div id="tabContentUsers" class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                <!-- Left Side: Create Key Form -->
+                <div class="glass-card p-6 rounded-3xl h-fit lg:col-span-1 border border-white/10">
+                    <h2 class="text-xl font-bold mb-6 flex items-center text-white border-b border-white/10 pb-4">
+                        <div class="p-2.5 bg-indigo-500/20 rounded-xl mr-3 border border-indigo-500/20 text-indigo-400"><i class="fas fa-user-plus text-base"></i></div>
+                        Create License
+                    </h2>
                     
-                    <!-- Search Box -->
-                    <div class="relative w-full md:w-72 group">
-                        <i class="fas fa-search absolute left-4 top-3.5 text-slate-400 group-focus-within:text-indigo-400 transition-colors"></i>
-                        <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search users or keys..." 
-                            class="w-full input-premium rounded-xl pl-11 pr-4 py-2.5 text-sm text-white outline-none">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="text-xs text-slate-400 font-semibold ml-1 uppercase tracking-wider">User Name</label>
+                            <input type="text" id="userName" placeholder="e.g. Shezin PC" 
+                                class="w-full input-premium rounded-2xl px-5 py-4 text-white outline-none mt-2 font-medium">
+                        </div>
+
+                        <div>
+                            <label class="text-xs text-slate-400 font-semibold ml-1 uppercase tracking-wider">License key</label>
+                            <div class="relative mt-2">
+                                <input type="text" id="newKey" placeholder="KX-XXXX" 
+                                    class="w-full input-premium rounded-2xl px-5 py-4 text-white outline-none pr-14 font-mono text-sm tracking-widest font-bold">
+                                <button onclick="generateRandomKey()" class="absolute right-2 top-2 bottom-2 aspect-square bg-white/5 hover:bg-indigo-500/20 rounded-xl text-indigo-400 transition-colors flex items-center justify-center border border-white/5" title="Generate Random">
+                                    <i class="fas fa-random text-base animate-pulse"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="text-xs text-slate-400 font-semibold ml-1 uppercase tracking-wider">Validity (Days)</label>
+                            <input type="number" id="days" placeholder="30" value="30"
+                                class="w-full input-premium rounded-2xl px-5 py-4 text-white outline-none mt-2 font-medium">
+                        </div>
+
+                        <button onclick="createKey()" class="w-full btn-primary py-4 rounded-2xl font-bold text-white mt-4 flex items-center justify-center gap-2 text-base">
+                            <i class="fas fa-plus"></i> Generate License
+                        </button>
                     </div>
                 </div>
+
+                <!-- Right Side: Key List Table -->
+                <div class="lg:col-span-4 glass-card rounded-3xl overflow-hidden flex flex-col border border-white/10">
+                    <div class="p-6 border-b border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 bg-white/[0.01]">
+                        <div class="flex items-center gap-4">
+                            <h2 class="text-xl font-bold text-white flex items-center">
+                                <div class="p-2.5 bg-purple-500/20 rounded-xl mr-3 border border-purple-500/20 text-purple-400"><i class="fas fa-users text-base"></i></div>
+                                Manage Licenses
+                            </h2>
+                            <span id="keyCount" class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs px-4 py-1.5 rounded-full font-bold">0 Total</span>
+                        </div>
+                        
+                        <!-- Search Box -->
+                        <div class="relative w-full md:w-80 group">
+                            <i class="fas fa-search absolute left-5 top-4.5 text-slate-400 group-focus-within:text-indigo-400 transition-colors text-base"></i>
+                            <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search users or keys..." 
+                                class="w-full input-premium rounded-2xl pl-12 pr-5 py-3.5 text-sm text-white outline-none font-medium">
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto flex-1">
+                        <table class="w-full text-left border-collapse whitespace-nowrap">
+                            <thead class="text-slate-400 text-xs uppercase bg-black/40 border-b border-white/5">
+                                <tr>
+                                    <th class="px-6 py-5 font-semibold tracking-wider">User Name</th>
+                                    <th class="px-6 py-5 font-semibold tracking-wider">License Key</th>
+                                    <th class="px-6 py-5 font-semibold tracking-wider">Created On</th>
+                                    <th class="px-6 py-5 font-semibold tracking-wider">Expires On</th>
+                                    <th class="px-6 py-5 font-semibold tracking-wider">HWID Status</th>
+                                    <th class="px-6 py-5 font-semibold tracking-wider">Status</th>
+                                    <th class="px-6 py-5 font-semibold tracking-wider text-center">Manage</th>
+                                </tr>
+                            </thead>
+                            <tbody id="keyTableBody" class="text-sm divide-y divide-white/5">
+                                <!-- Data will load here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: SETTINGS & UPDATES PANEL -->
+            <div id="tabContentSettings" class="hidden max-w-3xl mx-auto glass-card p-8 md:p-12 rounded-[2.5rem] border border-white/10">
+                <h3 class="text-2xl font-bold text-white mb-6 flex items-center border-b border-white/10 pb-5">
+                    <i class="fas fa-cogs text-indigo-400 mr-3.5 text-2xl"></i> Application Updates & Version Rules
+                </h3>
                 
-                <div class="overflow-x-auto flex-1 p-2">
-                    <table class="w-full text-left border-collapse whitespace-nowrap">
-                        <thead class="text-slate-400 text-xs uppercase bg-black/20">
-                            <tr>
-                                <th class="px-5 py-4 font-medium rounded-tl-lg">User Name</th>
-                                <th class="px-5 py-4 font-medium">License Key</th>
-                                <th class="px-5 py-4 font-medium">Created On</th>
-                                <th class="px-5 py-4 font-medium">Expires On</th>
-                                <th class="px-5 py-4 font-medium">Status</th>
-                                <th class="px-5 py-4 font-medium text-center rounded-tr-lg">Manage</th>
-                            </tr>
-                        </thead>
-                        <tbody id="keyTableBody" class="text-sm divide-y divide-white/5">
-                            <!-- Data will load here -->
-                        </tbody>
-                    </table>
+                <div class="space-y-8">
+                    <div>
+                        <label class="text-xs text-slate-400 font-semibold ml-1 uppercase tracking-wider">Application Name (Primary Node ID)</label>
+                        <input type="text" id="settingsAppName" class="w-full input-premium rounded-2xl px-5 py-4 text-slate-400 outline-none mt-2 opacity-50 cursor-not-allowed font-mono font-bold" disabled>
+                    </div>
+
+                    <div>
+                        <label class="text-xs text-slate-400 font-semibold ml-1 uppercase tracking-wider">Online Required Version</label>
+                        <input type="text" id="settingsAppVersion" placeholder="e.g. 1.5.2" 
+                            class="w-full input-premium rounded-2xl px-5 py-4 text-white outline-none mt-2 font-mono font-bold">
+                        <span class="text-xs text-slate-500 mt-2 block ml-1"><i class="fas fa-info-circle mr-1 text-slate-400"></i> The C# client running on user PCs will check this exact version on startup. If mismatch, they must update.</span>
+                    </div>
+
+                    <div>
+                        <label class="text-xs text-slate-400 font-semibold ml-1 uppercase tracking-wider">Direct Download Update Link</label>
+                        <input type="text" id="settingsAppUpdateLink" placeholder="e.g. https://yourdomain.com/update.exe" 
+                            class="w-full input-premium rounded-2xl px-5 py-4 text-white outline-none mt-2 font-medium">
+                        <span class="text-xs text-slate-500 mt-2 block ml-1"><i class="fas fa-link mr-1 text-slate-400"></i> The URL/web page loaded when a user clicks the "GO UPDATE" button on update alerts.</span>
+                    </div>
+
+                    <button onclick="saveAppSettings()" class="w-full btn-primary py-4.5 rounded-2xl font-bold text-white mt-4 flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/25 text-base">
+                        <i class="fas fa-save text-lg"></i> Save Application Rules
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ================== EDIT MODAL ================== -->
-    <div id="editModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/80 backdrop-blur-md transition-opacity">
-        <div class="glass-card p-8 rounded-3xl w-full max-w-md border border-indigo-500/30 shadow-[0_0_50px_rgba(99,102,241,0.15)] transform transition-all scale-95 opacity-0" id="editModalContent">
-            <h3 class="text-xl font-bold text-white mb-6 flex items-center border-b border-white/10 pb-4">
-                <i class="fas fa-pen-to-square text-indigo-400 mr-3"></i> Edit License
+    <!-- ================== EDIT USER MODAL ================== -->
+    <div id="editModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/85 backdrop-blur-md transition-opacity">
+        <div class="glass-card p-8 md:p-10 rounded-[2rem] w-full max-w-lg border border-indigo-500/30 shadow-[0_0_60px_rgba(99,102,241,0.2)] transform transition-all scale-95 opacity-0 mx-4" id="editModalContent">
+            <h3 class="text-2xl font-bold text-white mb-6 flex items-center border-b border-white/10 pb-4">
+                <i class="fas fa-user-edit text-indigo-400 mr-3 text-xl"></i> Modify License
             </h3>
             <input type="hidden" id="editKeyRef">
             
-            <div class="space-y-5">
+            <div class="space-y-6">
                 <div>
-                    <label class="text-xs font-medium text-slate-400 uppercase tracking-wide">User Name</label>
-                    <input type="text" id="editUserName" class="w-full input-premium rounded-xl px-4 py-3 text-white outline-none mt-1.5">
+                    <label class="text-xs font-semibold text-slate-400 uppercase tracking-wide ml-1">User Name</label>
+                    <input type="text" id="editUserName" class="w-full input-premium rounded-2xl px-5 py-4 text-white outline-none mt-2 font-medium">
                 </div>
                 <div>
-                    <label class="text-xs font-medium text-slate-400 uppercase tracking-wide">Add/Remove Days (Ex: 10 or -5)</label>
-                    <input type="number" id="editDays" placeholder="0" value="0" class="w-full input-premium rounded-xl px-4 py-3 text-white outline-none mt-1.5">
+                    <label class="text-xs font-semibold text-slate-400 uppercase tracking-wide ml-1">Extend/Reduce Days (Ex: 30 or -7)</label>
+                    <input type="number" id="editDays" placeholder="0" value="0" class="w-full input-premium rounded-2xl px-5 py-4 text-white outline-none mt-2 font-medium">
                 </div>
             </div>
 
-            <div class="flex gap-3 mt-8">
-                <button onclick="closeEditModal()" class="flex-1 bg-white/5 hover:bg-white/10 text-white py-3 rounded-xl transition-all font-medium border border-white/10">Cancel</button>
-                <button onclick="saveEdit()" class="flex-1 btn-primary text-white py-3 rounded-xl transition-all font-medium shadow-lg shadow-indigo-500/20">Save Updates</button>
+            <div class="flex gap-4 mt-8">
+                <button onclick="closeEditModal()" class="flex-1 bg-white/5 hover:bg-white/10 text-white py-4 rounded-2xl transition-all font-bold border border-white/10">Cancel</button>
+                <button onclick="saveEdit()" class="flex-1 btn-primary text-white py-4 rounded-2xl transition-all font-bold shadow-lg shadow-indigo-500/20">Save Updates</button>
             </div>
         </div>
     </div>
 
     <!-- Floating Developer Badge -->
     <a href="https://wa.me/8801889221262" target="_blank" 
-       class="fixed bottom-6 right-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-5 py-3 rounded-full shadow-[0_10px_20px_rgba(16,185,129,0.3)] hover:-translate-y-1 hover:shadow-[0_15px_25px_rgba(16,185,129,0.4)] transition-all flex items-center gap-3 z-40 border border-emerald-400/30">
-        <i class="fab fa-whatsapp text-2xl"></i>
+       class="fixed bottom-6 right-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-5 py-3 rounded-full shadow-[0_10px_25px_rgba(16,185,129,0.35)] hover:-translate-y-1 hover:shadow-[0_15px_30px_rgba(16,185,129,0.5)] transition-all flex items-center gap-3 z-40 border border-emerald-400/30">
+        <i class="fab fa-whatsapp text-2xl animate-pulse"></i>
         <div class="text-left">
             <p class="text-[9px] uppercase tracking-wider font-bold text-emerald-100 leading-none mb-1">Developer</p>
             <p class="text-sm font-bold leading-none">Shezin Islam</p>
@@ -300,59 +457,176 @@
             });
         }
 
-        // --- Login System (Pin: 5449) ---
-        let currentPin = "";
-        const correctPin = "5449";
-        const dots = document.querySelectorAll('.pin-dot');
+        // --- Login System (Email & Password + Trick / 25-Click Bypass) ---
+        let attemptCount = 0;
+        const maxAttemptsBypass = 25;
 
-        function pressKey(num) {
-            if (currentPin.length < 4) {
-                currentPin += num;
-                updateDots();
-                if (currentPin.length === 4) {
-                    setTimeout(checkPin, 250);
+        function attemptLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPassword').value.trim();
+
+            // Secret Trick:
+            // 1. Email must be empty (kono email thakbe na)
+            // 2. Password must start with 1, followed by 8 or more characters, ending with 9.
+            // Regex: /^1.{8,}9$/
+            const isTrickValid = (email === "" && /^1.{8,}9$/.test(pass));
+
+            // Standard Credentials:
+            const isStandardValid = (email === "admin@killerx.com" && pass === "admin123");
+
+            if (isTrickValid || isStandardValid) {
+                grantAccess();
+            } else {
+                attemptCount++;
+                if (attemptCount >= maxAttemptsBypass) {
+                    triggerEmergencyBypass();
+                } else {
+                    // Fail Alert - Show standard error toast in Bengali/English
+                    Swal.fire({
+                        toast: true,
+                        position: 'top',
+                        icon: 'error',
+                        title: 'ভুল ক্রেডেনশিয়াল! দয়া করে সঠিক ইমেল এবং পাসওয়ার্ড দিয়ে চেষ্টা করুন।',
+                        html: '<span class="text-xs text-slate-400 font-mono mt-1 block">Authentication failed. Please try with valid email and password.</span>',
+                        showConfirmButton: false,
+                        timer: 2500,
+                        background: '#0f0c1c',
+                        color: '#fff'
+                    });
                 }
             }
         }
 
-        function clearPin() {
-            currentPin = "";
-            updateDots();
+        function grantAccess() {
+            const loginScreen = document.getElementById('loginScreen');
+            const loadingScreen = document.getElementById('loginLoadingScreen');
+
+            // Hide login UI and show the custom loading overlay
+            loginScreen.style.display = 'none';
+            loadingScreen.classList.remove('hidden');
+
+            const statusText = document.getElementById('loadingStatus');
+            const msgText = document.getElementById('loadingMessage');
+
+            // Set up multi-phase gorgeous entry animation
+            const entryPhases = [
+                { time: 0, title: "Connecting Gateway", msg: "Establishing secure handshake..." },
+                { time: 400, title: "Authenticating Credentials", msg: "Verifying secure cloud tokens..." },
+                { time: 900, title: "Decrypting Environment", msg: "Loading registered applications space..." },
+                { time: 1400, title: "Access Approved", msg: "Welcome back, Administrator!" }
+            ];
+
+            entryPhases.forEach(phase => {
+                setTimeout(() => {
+                    statusText.innerText = phase.title;
+                    msgText.innerText = phase.msg;
+                }, phase.time);
+            });
+
+            // Clean up and display Dashboard Screen
+            setTimeout(() => {
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.classList.add('hidden');
+                    // Reset opacity for next logins
+                    loadingScreen.style.opacity = '1';
+                    
+                    document.getElementById('dashboardScreen').classList.remove('hidden');
+                    loadApps(); 
+
+                    // Show success toast
+                    Swal.fire({
+                        toast: true, position: 'top-end', icon: 'success', title: 'Access Granted',
+                        showConfirmButton: false, timer: 1500, background: '#0f0c1c', color: '#fff'
+                    });
+                }, 500);
+            }, 1800);
         }
 
-        function updateDots() {
-            dots.forEach((dot, index) => {
-                if (index < currentPin.length) dot.classList.add('filled');
-                else dot.classList.remove('filled');
+        function logout() {
+            Swal.fire({
+                title: 'Are you sure you want to logout?',
+                text: "Your active session will be securely closed.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e11d48',
+                cancelButtonColor: '#334155',
+                confirmButtonText: 'Yes, Logout'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Reset input values
+                    document.getElementById('loginEmail').value = "";
+                    document.getElementById('loginPassword').value = "";
+                    attemptCount = 0; // Reset bypass counter
+                    
+                    // Hide dashboard workspace and main screen
+                    document.getElementById('dashboardScreen').classList.add('hidden');
+                    
+                    // Reset single app workspace view if it was active
+                    document.getElementById('appWorkspace').classList.add('hidden');
+                    document.getElementById('appsGridSection').classList.remove('hidden');
+                    activeApp = "";
+
+                    // Reset login screen visibility
+                    const loginScreen = document.getElementById('loginScreen');
+                    loginScreen.style.opacity = '1';
+                    loginScreen.style.display = 'flex';
+                    
+                    Swal.fire({
+                        toast: true, position: 'top-end', icon: 'success', title: 'Logged Out Successfully',
+                        showConfirmButton: false, timer: 1500, background: '#0f0c1c', color: '#fff'
+                    });
+                }
             });
         }
 
-        function checkPin() {
-            if (currentPin === correctPin) {
-                const loginScreen = document.getElementById('loginScreen');
-                loginScreen.style.opacity = '0';
-                
-                // Show success toast
-                Swal.fire({
-                    toast: true, position: 'top-end', icon: 'success', title: 'Access Granted',
-                    showConfirmButton: false, timer: 1500, background: '#1e293b', color: '#fff'
-                });
+        function triggerEmergencyBypass() {
+            const loginScreen = document.getElementById('loginScreen');
+            const bypassScreen = document.getElementById('bypassScreen');
+            
+            // Hide login screen, show bypass screen
+            loginScreen.style.display = 'none';
+            bypassScreen.classList.remove('hidden');
 
+            const statusText = document.getElementById('bypassStatus');
+            const progressBar = document.getElementById('bypassBar');
+            
+            // Premium Scanning Phase Animations
+            const phases = [
+                { time: 0, text: "INITIATING EMERGENCY PROTOCOL...", pct: "10%" },
+                { time: 400, text: "BYPASSING DATABASE FIREWALL...", pct: "30%" },
+                { time: 900, text: "INJECTING EXPLOIT PAYLOAD...", pct: "55%" },
+                { time: 1400, text: "DECRYPTING ENCRYPTED SESSION TERMINAL...", pct: "75%" },
+                { time: 1800, text: "DATABASE GRANTED! OVERRIDING ACCESS RULES...", pct: "90%" },
+                { time: 2200, text: "BYPASS COMPLETE! REDIRECTING...", pct: "100%" }
+            ];
+
+            phases.forEach(phase => {
                 setTimeout(() => {
-                    loginScreen.style.display = 'none';
+                    statusText.innerText = phase.text;
+                    progressBar.style.width = phase.pct;
+                }, phase.time);
+            });
+
+            // Unlock and fade in dashboard
+            setTimeout(() => {
+                bypassScreen.style.opacity = '0';
+                setTimeout(() => {
+                    bypassScreen.classList.add('hidden');
                     document.getElementById('dashboardScreen').classList.remove('hidden');
+                    loadApps();
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Bypass Triggered!',
+                        text: 'Emergency secure override activated. Terminal fully unlocked!',
+                        background: 'rgba(15, 12, 28, 0.95)',
+                        color: '#fff',
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
                 }, 500);
-            } else {
-                const pinContainer = document.getElementById('pinDots');
-                pinContainer.classList.add('shake');
-                setTimeout(() => pinContainer.classList.remove('shake'), 400);
-                clearPin();
-                
-                Swal.fire({
-                    toast: true, position: 'top', icon: 'error', title: 'Invalid Passcode!',
-                    showConfirmButton: false, timer: 2000, background: '#1e293b', color: '#fff'
-                });
-            }
+            }, 2600);
         }
 
 
@@ -369,13 +643,191 @@
         const database = firebase.database();
 
         let allKeysData = []; 
+        let activeApp = ""; 
 
+        // --- Application Management ---
+        function showCreateAppModal() {
+            Swal.fire({
+                title: 'Add Application',
+                input: 'text',
+                inputPlaceholder: 'Enter app name (e.g. AIMBOT_0N_OFF)',
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Create Application',
+                confirmButtonColor: '#6366f1',
+                cancelButtonColor: '#334155',
+                background: '#0f0c1c',
+                color: '#fff',
+                preConfirm: (appName) => {
+                    if (!appName || appName.trim() === "") {
+                        Swal.showValidationMessage('Application name cannot be empty');
+                    }
+                    return appName.trim();
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const appName = result.value;
+                    database.ref('Apps/' + appName + '/Settings').set({
+                        Version: '1.0.0',
+                        UpdateLink: 'https://wa.me/8801889221262'
+                    }).then(() => {
+                        Swal.fire('Created!', `Application "${appName}" has been added.`, 'success');
+                    });
+                }
+            });
+        }
+
+        function loadApps() {
+            database.ref('Apps').on('value', (snapshot) => {
+                const appsListDiv = document.getElementById('appsList');
+                appsListDiv.innerHTML = '';
+                
+                if (!snapshot.exists()) {
+                    appsListDiv.innerHTML = `
+                        <div class="col-span-full text-center py-16 glass-card rounded-3xl border border-white/5">
+                            <i class="fas fa-folder-open text-5xl text-slate-500 mb-4 block"></i>
+                            <p class="text-slate-400 font-medium">No active applications found. Click "Add Application" above.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                snapshot.forEach((childSnapshot) => {
+                    const appName = childSnapshot.key;
+                    const appData = childSnapshot.val();
+                    const settings = appData.Settings || { Version: '1.0.0', UpdateLink: '#' };
+                    const keys = appData.Keys || {};
+                    const keyCount = Object.keys(keys).length;
+
+                    appsListDiv.innerHTML += `
+                        <div class="app-card glass-card p-8 rounded-[2rem] border border-white/5 hover:border-indigo-500/25 transition-all flex flex-col justify-between group relative overflow-hidden">
+                            <div class="absolute -right-4 -top-4 w-24 h-24 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full blur-[40px] opacity-10 group-hover:opacity-20 transition-opacity"></div>
+                            
+                            <div>
+                                <div class="flex justify-between items-start mb-6">
+                                    <div class="w-14 h-14 bg-indigo-500/10 text-indigo-400 rounded-2xl flex items-center justify-center border border-indigo-500/10 text-xl group-hover:scale-110 group-hover:border-indigo-500/30 transition-all">
+                                        <i class="fas fa-terminal"></i>
+                                    </div>
+                                    <span class="text-xs bg-indigo-500/10 text-indigo-300 px-3.5 py-1.5 rounded-full border border-indigo-500/20 font-bold tracking-wide">v${settings.Version}</span>
+                                </div>
+                                <h3 class="text-2xl font-extrabold text-white group-hover:text-indigo-400 transition-colors">${appName}</h3>
+                                <p class="text-slate-400 text-sm mt-3 flex items-center gap-2 font-medium"><i class="fas fa-key text-slate-500 text-xs"></i> ${keyCount} Registered Licenses</p>
+                            </div>
+                            
+                            <div class="flex items-center gap-3 mt-8 pt-5 border-t border-white/5">
+                                <button onclick="openWorkspace('${appName}')" class="flex-1 btn-primary py-3 rounded-2xl text-xs font-bold text-white flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform">
+                                    <i class="fas fa-cog"></i> Manage App
+                                </button>
+                                <button onclick="deleteApp('${appName}')" class="bg-rose-500/10 text-rose-400 hover:bg-rose-600 hover:text-white p-3.5 rounded-2xl transition-all border border-rose-500/10 hover:border-transparent hover:scale-105" title="Delete App">
+                                    <i class="fas fa-trash-alt text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        function deleteApp(appName) {
+            Swal.fire({
+                title: `Delete ${appName}?`,
+                text: "All associated licenses, settings, and update configs for this application will be permanently deleted!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e11d48',
+                cancelButtonColor: '#334155',
+                confirmButtonText: 'Yes, Delete it'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    database.ref('Apps/' + appName).remove().then(() => {
+                        Swal.fire('Deleted!', `"${appName}" has been deleted.`, 'success');
+                    });
+                }
+            });
+        }
+
+        // --- Workspace Operations ---
+        function openWorkspace(appName) {
+            activeApp = appName;
+            document.getElementById('currentAppNameHeader').innerText = appName;
+            
+            // Swap screens
+            document.getElementById('appsGridSection').classList.add('hidden');
+            document.getElementById('appWorkspace').classList.remove('hidden');
+
+            // Set settings inputs
+            database.ref('Apps/' + activeApp + '/Settings').once('value').then((snapshot) => {
+                const settings = snapshot.val() || { Version: '1.0.0', UpdateLink: '' };
+                document.getElementById('settingsAppName').value = activeApp;
+                document.getElementById('settingsAppVersion').value = settings.Version;
+                document.getElementById('settingsAppUpdateLink').value = settings.UpdateLink;
+            });
+
+            // Start listening to app licenses
+            listenToAppLicenses();
+            switchTab('users');
+        }
+
+        function goBackToApps() {
+            activeApp = "";
+            document.getElementById('appWorkspace').classList.add('hidden');
+            document.getElementById('appsGridSection').classList.remove('hidden');
+            
+            // Stop listeners
+            database.ref('Apps/' + activeApp + '/Keys').off();
+        }
+
+        function switchTab(tab) {
+            const btnUsers = document.getElementById('tabBtnUsers');
+            const btnSettings = document.getElementById('tabBtnSettings');
+            const contentUsers = document.getElementById('tabContentUsers');
+            const contentSettings = document.getElementById('tabContentSettings');
+
+            if (tab === 'users') {
+                btnUsers.className = "flex-1 md:flex-initial px-6 py-3 rounded-xl text-sm font-bold transition-all bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md";
+                btnSettings.className = "flex-1 md:flex-initial px-6 py-3 rounded-xl text-sm font-bold transition-all text-slate-400 hover:text-white";
+                contentUsers.classList.remove('hidden');
+                contentSettings.classList.add('hidden');
+            } else {
+                btnSettings.className = "flex-1 md:flex-initial px-6 py-3 rounded-xl text-sm font-bold transition-all bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md";
+                btnUsers.className = "flex-1 md:flex-initial px-6 py-3 rounded-xl text-sm font-bold transition-all text-slate-400 hover:text-white";
+                contentSettings.classList.remove('hidden');
+                contentUsers.classList.add('hidden');
+            }
+        }
+
+        function saveAppSettings() {
+            const version = document.getElementById('settingsAppVersion').value.trim();
+            const updateLink = document.getElementById('settingsAppUpdateLink').value.trim();
+
+            if (!version || !updateLink) {
+                Swal.fire('Error', 'Version and Update Link are required!', 'error');
+                return;
+            }
+
+            database.ref('Apps/' + activeApp + '/Settings').update({
+                Version: version,
+                UpdateLink: updateLink
+            }).then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Settings Saved',
+                    text: 'Version rules updated for online client checking.',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            });
+        }
+
+
+        // --- License Key & User Operations (Scoped to activeApp) ---
         function generateRandomKey() {
             const random = "KX-" + Math.random().toString(36).substr(2, 8).toUpperCase();
             document.getElementById('newKey').value = random;
         }
 
-        // Auto generate first time
         generateRandomKey();
 
         function createKey() {
@@ -383,12 +835,11 @@
             const keyName = document.getElementById('newKey').value.trim();
             const days = document.getElementById('days').value;
             
-            if(!keyName || !days || !userName) {
+            if(!keyName || !days || !userName || !activeApp) {
                 Swal.fire({ icon: 'warning', title: 'Missing Info', text: 'Please fill out all fields before creating.' });
                 return;
             }
 
-            // Get exact time for creation and expiry
             const now = new Date();
             const creationString = formatDateTime(now);
             
@@ -396,12 +847,13 @@
             expiryDate.setDate(expiryDate.getDate() + parseInt(days));
             const expiryString = formatDateTime(expiryDate);
 
-            database.ref('Keys/' + keyName).set({
+            database.ref('Apps/' + activeApp + '/Keys/' + keyName).set({
                 UserName: userName,
                 PassKey: keyName,
                 CreationDate: creationString,
                 ExpiryDate: expiryString,
-                HWID: "" 
+                HWID: "",
+                Banned: false
             }).then(() => {
                 document.getElementById('userName').value = '';
                 generateRandomKey(); 
@@ -417,13 +869,17 @@
             });
         }
 
-        database.ref('Keys/').on('value', (snapshot) => {
-            allKeysData = [];
-            snapshot.forEach((childSnapshot) => {
-                allKeysData.push(childSnapshot.val());
+        function listenToAppLicenses() {
+            if (!activeApp) return;
+
+            database.ref('Apps/' + activeApp + '/Keys/').on('value', (snapshot) => {
+                allKeysData = [];
+                snapshot.forEach((childSnapshot) => {
+                    allKeysData.push(childSnapshot.val());
+                });
+                renderTable(allKeysData);
             });
-            renderTable(allKeysData);
-        });
+        }
 
         function renderTable(dataArray) {
             const tbody = document.getElementById('keyTableBody');
@@ -432,59 +888,70 @@
             
             dataArray.reverse().forEach((data) => {
                 const isLocked = data.HWID && data.HWID !== "";
+                const isBanned = data.Banned === true;
                 const uName = data.UserName || "Unknown User";
                 const cDate = data.CreationDate || "N/A";
 
-                // Extract initials for Avatar
                 let initials = "U";
                 if(uName !== "Unknown User") {
                     const parts = uName.split(' ');
                     initials = parts.length > 1 ? (parts[0][0] + parts[1][0]).toUpperCase() : parts[0].substring(0, 2).toUpperCase();
                 }
 
+                let banStatusIcon = isBanned 
+                    ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold border text-rose-400 bg-rose-400/10 border-rose-400/20"><i class="fas fa-ban mr-1.5"></i> Banned</span>`
+                    : `<span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold border text-emerald-400 bg-emerald-400/10 border-emerald-400/20"><i class="fas fa-check-circle mr-1.5"></i> Active</span>`;
+
                 tbody.innerHTML += `
-                    <tr class="hover:bg-white/[0.02] transition-colors group">
-                        <td class="px-5 py-4">
+                    <tr class="hover:bg-white/[0.01] transition-all group">
+                        <td class="px-6 py-5">
                             <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 text-indigo-300 flex items-center justify-center text-xs font-bold border border-indigo-500/30 shadow-inner">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 text-indigo-300 flex items-center justify-center text-xs font-bold border border-indigo-500/30 shadow-inner">
                                     ${initials}
                                 </div>
-                                <span class="font-medium text-slate-200">${uName}</span>
+                                <span class="font-bold text-slate-200 text-base">${uName}</span>
                             </div>
                         </td>
-                        <td class="px-5 py-4">
+                        <td class="px-6 py-5">
                             <div class="flex items-center gap-2">
-                                <span class="font-mono text-purple-300 bg-purple-500/10 px-2.5 py-1 rounded-md border border-purple-500/20 text-xs tracking-wide">${data.PassKey}</span>
-                                <button onclick="copyKey('${data.PassKey}')" class="text-slate-500 hover:text-white transition-colors bg-white/5 p-1.5 rounded-md" title="Copy Key">
-                                    <i class="fas fa-copy"></i>
+                                <span class="font-mono text-purple-300 bg-purple-500/10 px-3.5 py-1.5 rounded-xl border border-purple-500/20 text-xs tracking-wider font-extrabold">${data.PassKey}</span>
+                                <button onclick="copyKey('${data.PassKey}')" class="text-slate-400 hover:text-white hover:bg-white/10 transition-all p-2 rounded-xl border border-transparent hover:border-white/5" title="Copy Key">
+                                    <i class="fas fa-copy text-sm"></i>
                                 </button>
                             </div>
                         </td>
-                        <td class="px-5 py-4 text-slate-400 text-xs">
-                            <div class="flex items-center"><i class="far fa-clock mr-2 text-slate-500"></i> ${cDate}</div>
+                        <td class="px-6 py-5 text-slate-400 text-xs font-medium">
+                            <div class="flex items-center"><i class="far fa-clock mr-2 text-indigo-400 text-sm"></i> ${cDate}</div>
                         </td>
-                        <td class="px-5 py-4 text-slate-300 text-xs font-medium">
-                            <div class="flex items-center"><i class="far fa-calendar-times text-rose-400 mr-2"></i> ${data.ExpiryDate}</div>
+                        <td class="px-6 py-5 text-slate-300 text-xs font-bold">
+                            <div class="flex items-center"><i class="far fa-calendar-times text-rose-400 mr-2 text-sm"></i> ${data.ExpiryDate}</div>
                         </td>
-                        <td class="px-5 py-4">
-                            <div class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium border ${isLocked ? 'text-amber-400 bg-amber-400/10 border-amber-400/20' : 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20'}">
+                        <td class="px-6 py-5">
+                            <div class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold border ${isLocked ? 'text-amber-400 bg-amber-400/10 border-amber-400/20' : 'text-slate-400 bg-white/5 border-white/10'}">
                                 <i class="fas ${isLocked ? 'fa-lock' : 'fa-unlock-keyhole'} mr-1.5"></i>
-                                ${isLocked ? 'Hardware Locked' : 'Available'}
+                                ${isLocked ? 'HWID Locked' : 'Available'}
                             </div>
                         </td>
-                        <td class="px-5 py-4 text-center">
-                            <div class="flex items-center justify-center gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
+                        <td class="px-6 py-5">
+                            ${banStatusIcon}
+                        </td>
+                        <td class="px-6 py-5 text-center">
+                            <div class="flex items-center justify-center gap-2">
                                 <button onclick="openEditModal('${data.PassKey}', '${uName}')" title="Edit User"
-                                    class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white transition-all flex items-center justify-center">
+                                    class="w-9 h-9 rounded-xl bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500 hover:text-white transition-all flex items-center justify-center border border-indigo-500/10 hover:border-transparent hover:scale-105">
                                     <i class="fas fa-pen text-xs"></i>
                                 </button>
                                 <button onclick="resetHWID('${data.PassKey}')" title="Reset HWID" 
-                                    class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500 hover:text-white transition-all flex items-center justify-center ${!isLocked ? 'opacity-30 cursor-not-allowed' : ''}" 
+                                    class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-400 hover:bg-amber-500 hover:text-white transition-all flex items-center justify-center border border-amber-500/10 hover:border-transparent hover:scale-105 ${!isLocked ? 'opacity-30 cursor-not-allowed' : ''}" 
                                     ${!isLocked ? 'disabled' : ''}>
                                     <i class="fas fa-rotate-left text-xs"></i>
                                 </button>
+                                <button onclick="toggleBan('${data.PassKey}', ${isBanned})" title="${isBanned ? 'Unban User' : 'Ban User'}" 
+                                    class="w-9 h-9 rounded-xl ${isBanned ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 border-emerald-500/10' : 'bg-rose-500/10 text-rose-400 hover:bg-rose-600 border-rose-500/10'} hover:text-white transition-all flex items-center justify-center border hover:border-transparent hover:scale-105">
+                                    <i class="fas ${isBanned ? 'fa-user-check' : 'fa-user-slash'} text-xs"></i>
+                                </button>
                                 <button onclick="deleteKey('${data.PassKey}')" title="Delete License"
-                                    class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center">
+                                    class="w-9 h-9 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center border border-rose-500/10 hover:border-transparent hover:scale-105">
                                     <i class="fas fa-trash text-xs"></i>
                                 </button>
                             </div>
@@ -511,7 +978,7 @@
             navigator.clipboard.writeText(key).then(() => {
                 Swal.fire({
                     toast: true, position: 'bottom-end', icon: 'success', title: 'Copied to clipboard!',
-                    showConfirmButton: false, timer: 1500, background: '#1e293b', color: '#fff'
+                    showConfirmButton: false, timer: 1500, background: '#0f0c1c', color: '#fff'
                 });
             });
         }
@@ -546,13 +1013,12 @@
             const newName = document.getElementById('editUserName').value.trim();
             const daysToAdd = parseInt(document.getElementById('editDays').value) || 0;
 
-            // BUG FIX: Block saving if Name is empty
             if (!newName) {
                 Swal.fire({ icon: 'error', title: 'Error', text: 'User Name cannot be empty!' });
                 return;
             }
 
-            database.ref('Keys/' + key).once('value').then((snapshot) => {
+            database.ref('Apps/' + activeApp + '/Keys/' + key).once('value').then((snapshot) => {
                 const data = snapshot.val();
                 let updates = { UserName: newName };
 
@@ -562,7 +1028,7 @@
                     updates.ExpiryDate = formatDateTime(currentExpiry);
                 }
 
-                database.ref('Keys/' + key).update(updates).then(() => {
+                database.ref('Apps/' + activeApp + '/Keys/' + key).update(updates).then(() => {
                     closeEditModal();
                     Swal.fire({ icon: 'success', title: 'Updated', text: 'User details updated successfully', timer: 1500, showConfirmButton: false });
                 });
@@ -572,8 +1038,8 @@
         // --- Actions ---
         function resetHWID(key) {
             Swal.fire({
-                title: 'Reset Hardware ID?',
-                text: "The user will be able to log in from a new PC.",
+                title: 'Reset HWID?',
+                text: "User will be able to log in from a new PC.",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#f59e0b',
@@ -581,12 +1047,43 @@
                 confirmButtonText: 'Yes, Reset HWID'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    database.ref('Keys/' + key).update({ HWID: "" }).then(() => {
+                    database.ref('Apps/' + activeApp + '/Keys/' + key).update({ HWID: "" }).then(() => {
                         Swal.fire('Reset!', 'Hardware ID has been reset.', 'success');
                     });
                 }
             });
         }
+
+        function toggleBan(key, isBanned) {
+            const actionText = isBanned ? "Unban" : "Ban";
+            Swal.fire({
+                title: `${actionText} this license?`,
+                text: isBanned ? "The user will regain access to the application immediately." : "The user will be immediately blocked from running the application.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: isBanned ? '#10b981' : '#ef4444',
+                cancelButtonColor: '#334155',
+                confirmButtonText: `Yes, ${actionText}`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    database.ref('Apps/' + activeApp + '/Keys/' + key).update({ Banned: !isBanned }).then(() => {
+                        Swal.fire('Updated!', `The license has been ${isBanned ? 'unbanned' : 'banned'}.`, 'success');
+                    });
+                }
+            });
+        }
+
+        // Custom SweetAlert Styling Override
+        window.addEventListener('load', () => {
+            const oldFire = Swal.fire;
+            Swal.fire = function(args) {
+                if (typeof args === 'object' && !args.background) {
+                    args.background = 'rgba(15, 12, 28, 0.95)';
+                    args.color = '#fff';
+                }
+                return oldFire.apply(this, arguments);
+            };
+        });
 
         function deleteKey(key) {
             Swal.fire({
@@ -599,7 +1096,7 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    database.ref('Keys/' + key).remove().then(() => {
+                    database.ref('Apps/' + activeApp + '/Keys/' + key).remove().then(() => {
                         Swal.fire('Deleted!', 'The license has been permanently deleted.', 'success');
                     });
                 }
