@@ -498,6 +498,7 @@
         }
 
         function grantAccess() {
+            localStorage.setItem('killerx_admin_logged_in', 'true');
             const loginScreen = document.getElementById('loginScreen');
             const loadingScreen = document.getElementById('loginLoadingScreen');
 
@@ -554,6 +555,7 @@
                 confirmButtonText: 'Yes, Logout'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    localStorage.removeItem('killerx_admin_logged_in');
                     // Reset input values
                     document.getElementById('loginEmail').value = "";
                     document.getElementById('loginPassword').value = "";
@@ -613,6 +615,7 @@
                 bypassScreen.style.opacity = '0';
                 setTimeout(() => {
                     bypassScreen.classList.add('hidden');
+                    localStorage.setItem('killerx_admin_logged_in', 'true');
                     document.getElementById('dashboardScreen').classList.remove('hidden');
                     loadApps();
 
@@ -1083,6 +1086,14 @@
                 }
                 return oldFire.apply(this, arguments);
             };
+
+            // Auto-bypass if session is already saved
+            if (localStorage.getItem('killerx_admin_logged_in') === 'true') {
+                const loginScreen = document.getElementById('loginScreen');
+                loginScreen.style.display = 'none';
+                document.getElementById('dashboardScreen').classList.remove('hidden');
+                loadApps();
+            }
         });
 
         function deleteKey(key) {
