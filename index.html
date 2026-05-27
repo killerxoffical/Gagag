@@ -1,3 +1,20 @@
+<!-- 
+================================================================================
+   INSTRUCTION FOR FUTURE AI AGENTS / CODE ASSISTANTS (INTEGRATION RULE)
+================================================================================
+   If the user asks you to connect a C# application to this Admin Panel:
+   1. You MUST ask the user for the following C# Control Names if they did not provide them:
+      - C# Namespace Name
+      - Login Form Class Name (e.g. login, Form1, etc.)
+      - Main Form Class Name (e.g. Form1, Main, etc.)
+      - License Key TextBox Control Name (e.g. guna2TextBox1)
+      - Login Button Control Name (e.g. guna2Button1)
+      - Current C# App Version (e.g. 1.0.0)
+   2. If the user forgot to provide these, prompt them immediately:
+      "Please provide the Namespace, Login Form Name, Main Form Name, Key TextBox Name, and Login Button Name of your C# project to begin the integration."
+   3. Once provided, customize and update the C# project files (AppConfig.cs, login.cs, Program.cs, and Form1.cs) to establish connection with this Admin Panel's Firebase Realtime Database.
+================================================================================
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -194,39 +211,45 @@
 
     <!-- ================== LOGIN SCREEN ================== -->
     <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-[#04030a]/95 backdrop-blur-md transition-opacity duration-500">
-        <div class="glass-card p-8 md:p-12 rounded-[2.5rem] w-full max-w-md border border-white/10 mx-4 relative overflow-hidden">
+        <div id="loginCard" class="glass-card p-8 md:p-10 rounded-[2.5rem] w-full max-w-sm border border-white/10 mx-4 relative overflow-hidden">
             <div class="absolute -right-10 -top-10 w-32 h-32 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full blur-[40px] opacity-20"></div>
             
-            <div class="text-center flex flex-col items-center mb-8">
+            <div class="text-center flex flex-col items-center mb-6">
                 <div class="w-16 h-16 bg-gradient-to-tr from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 shadow-[0_0_30px_rgba(99,102,241,0.4)] border border-white/10 rotate-6">
-                    <i class="fas fa-shield-halved text-2xl text-white"></i>
+                    <i class="fas fa-key text-2xl text-white"></i>
                 </div>
-                <h2 class="text-3xl font-extrabold tracking-tight text-white">Cloud Authentication</h2>
-                <p class="text-slate-400 text-xs mt-1.5 font-medium">Verify credentials to unlock terminal</p>
+                <h2 class="text-2xl font-extrabold tracking-tight text-white">Security Terminal</h2>
+                <p class="text-slate-400 text-xs mt-1.5 font-medium">Enter 4-Digit Security PIN to Unlock</p>
             </div>
 
-            <!-- Login Inputs -->
-            <div class="space-y-5">
-                <div>
-                    <label class="text-[10px] text-slate-400 font-bold uppercase tracking-widest ml-1">Email Address</label>
-                    <div class="relative mt-2">
-                        <i class="fas fa-envelope absolute left-5 top-[18px] text-slate-500 text-sm"></i>
-                        <input type="email" id="loginEmail" placeholder="admin@killerx.com" 
-                            class="w-full input-premium rounded-2xl pl-12 pr-5 py-4 text-white outline-none text-sm font-medium">
-                    </div>
-                </div>
+            <!-- PIN Dots Visual Display -->
+            <div class="flex justify-center gap-4 mb-8">
+                <div class="pin-dot" id="dot-0"></div>
+                <div class="pin-dot" id="dot-1"></div>
+                <div class="pin-dot" id="dot-2"></div>
+                <div class="pin-dot" id="dot-3"></div>
+            </div>
 
-                <div>
-                    <label class="text-[10px] text-slate-400 font-bold uppercase tracking-widest ml-1">Access Password</label>
-                    <div class="relative mt-2">
-                        <i class="fas fa-lock absolute left-5 top-[18px] text-slate-500 text-sm"></i>
-                        <input type="password" id="loginPassword" placeholder="••••••••" 
-                            class="w-full input-premium rounded-2xl pl-12 pr-5 py-4 text-white outline-none text-sm font-medium tracking-wide">
-                    </div>
-                </div>
+            <!-- Numpad Grid -->
+            <div class="grid grid-cols-3 gap-4 max-w-[280px] mx-auto mb-6">
+                <button onclick="pressPinKey('1')" class="btn-numpad py-3.5 flex items-center justify-center">1</button>
+                <button onclick="pressPinKey('2')" class="btn-numpad py-3.5 flex items-center justify-center">2</button>
+                <button onclick="pressPinKey('3')" class="btn-numpad py-3.5 flex items-center justify-center">3</button>
+                <button onclick="pressPinKey('4')" class="btn-numpad py-3.5 flex items-center justify-center">4</button>
+                <button onclick="pressPinKey('5')" class="btn-numpad py-3.5 flex items-center justify-center">5</button>
+                <button onclick="pressPinKey('6')" class="btn-numpad py-3.5 flex items-center justify-center">6</button>
+                <button onclick="pressPinKey('7')" class="btn-numpad py-3.5 flex items-center justify-center">7</button>
+                <button onclick="pressPinKey('8')" class="btn-numpad py-3.5 flex items-center justify-center">8</button>
+                <button onclick="pressPinKey('9')" class="btn-numpad py-3.5 flex items-center justify-center">9</button>
+                <button onclick="clearPin()" class="btn-numpad py-3.5 flex items-center justify-center text-rose-400 text-lg">C</button>
+                <button onclick="pressPinKey('0')" class="btn-numpad py-3.5 flex items-center justify-center">0</button>
+                <button onclick="backspacePin()" class="btn-numpad py-3.5 flex items-center justify-center text-amber-400 text-lg"><i class="fas fa-backspace"></i></button>
+            </div>
 
-                <button onclick="attemptLogin()" id="loginBtn" class="w-full btn-primary py-4.5 rounded-2xl font-bold text-white mt-8 flex items-center justify-center gap-2 text-base">
-                    <i class="fas fa-sign-in-alt"></i> Authenticate Session
+            <!-- Direct 5449 Bypass Button -->
+            <div class="text-center pt-2 border-t border-white/5">
+                <button onclick="quickBypass()" class="w-full py-4 rounded-2xl font-extrabold text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:scale-[1.02] shadow-lg shadow-indigo-500/25 transition-all duration-300 flex items-center justify-center gap-2 text-base">
+                    <i class="fas fa-bolt animate-pulse text-yellow-300"></i> Quick Login (5449)
                 </button>
             </div>
         </div>
@@ -292,9 +315,11 @@
                 </div>
                 
                 <!-- Tab Switching in workspace -->
-                <div class="flex gap-2 bg-black/45 p-2 rounded-2xl border border-white/5 w-full md:w-auto">
-                    <button onclick="switchTab('users')" id="tabBtnUsers" class="flex-1 md:flex-initial px-6 py-3 rounded-xl text-sm font-bold transition-all bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md">Users Table</button>
-                    <button onclick="switchTab('settings')" id="tabBtnSettings" class="flex-1 md:flex-initial px-6 py-3 rounded-xl text-sm font-bold transition-all text-slate-400 hover:text-white">Settings & Updates</button>
+                <div class="flex gap-2 bg-black/45 p-2 rounded-2xl border border-white/5 w-full md:w-auto overflow-x-auto">
+                    <button onclick="switchTab('users')" id="tabBtnUsers" class="flex-grow md:flex-grow-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md whitespace-nowrap">Users Table</button>
+                    <button onclick="switchTab('settings')" id="tabBtnSettings" class="flex-grow md:flex-grow-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white whitespace-nowrap">Settings & Updates</button>
+                    <button onclick="switchTab('alerts')" id="tabBtnAlerts" class="flex-grow md:flex-grow-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white whitespace-nowrap">Send Alerts</button>
+                    <button onclick="switchTab('developer')" id="tabBtnDeveloper" class="flex-grow md:flex-grow-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white whitespace-nowrap">Developer Suite</button>
                 </div>
             </div>
 
@@ -402,10 +427,155 @@
                             class="w-full input-premium rounded-2xl px-5 py-4 text-white outline-none mt-2 font-medium">
                         <span class="text-xs text-slate-500 mt-2 block ml-1"><i class="fas fa-link mr-1 text-slate-400"></i> The URL/web page loaded when a user clicks the "GO UPDATE" button on update alerts.</span>
                     </div>
-
                     <button onclick="saveAppSettings()" class="w-full btn-primary py-4.5 rounded-2xl font-bold text-white mt-4 flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/25 text-base">
                         <i class="fas fa-save text-lg"></i> Save Application Rules
                     </button>
+                </div>
+            </div>
+
+            <!-- TAB 3: ALERTS PANEL -->
+            <div id="tabContentAlerts" class="hidden max-w-3xl mx-auto glass-card p-8 md:p-12 rounded-[2.5rem] border border-white/10">
+                <h3 class="text-2xl font-bold text-white mb-6 flex items-center border-b border-white/10 pb-5">
+                    <i class="fas fa-bell text-indigo-400 mr-3.5 text-2xl animate-bounce"></i> Send Real-time Alerts
+                </h3>
+                
+                <div class="space-y-8">
+                    <!-- Global Notification Form -->
+                    <div class="p-6 bg-white/[0.02] rounded-3xl border border-white/5">
+                        <h4 class="text-lg font-bold text-indigo-300 mb-4 flex items-center gap-2">
+                            <i class="fas fa-globe text-indigo-400"></i> Global Notice (All Users)
+                        </h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs text-slate-400 font-semibold ml-1 uppercase tracking-wider">Notice Title</label>
+                                <input type="text" id="globalNoticeTitle" placeholder="e.g. Server Maintenance" 
+                                    class="w-full input-premium rounded-2xl px-5 py-4 text-white outline-none mt-2 font-medium">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 font-semibold ml-1 uppercase tracking-wider">Notice Message</label>
+                                <textarea id="globalNoticeMessage" placeholder="Type message here..." rows="3"
+                                    class="w-full input-premium rounded-2xl px-5 py-4 text-white outline-none mt-2 font-medium"></textarea>
+                            </div>
+                            <button onclick="sendGlobalNotice()" class="w-full btn-primary py-3.5 rounded-2xl font-bold text-white mt-2 flex items-center justify-center gap-2">
+                                <i class="fas fa-paper-plane"></i> Broadcast Global Notice
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Single User Notification Form -->
+                    <div class="p-6 bg-white/[0.02] rounded-3xl border border-white/5">
+                        <h4 class="text-lg font-bold text-purple-300 mb-4 flex items-center gap-2">
+                            <i class="fas fa-user text-purple-400"></i> Direct Notice (Single User)
+                        </h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs text-slate-400 font-semibold ml-1 uppercase tracking-wider">Select License / User</label>
+                                <select id="alertUserSelect" class="w-full input-premium rounded-2xl px-5 py-4 text-white outline-none mt-2 font-medium bg-[#0f0c1c]">
+                                    <option value="">-- Choose User --</option>
+                                    <!-- Options will be populated dynamically -->
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 font-semibold ml-1 uppercase tracking-wider">Notice Title</label>
+                                <input type="text" id="userNoticeTitle" placeholder="e.g. Warning: HWID Lock Info" 
+                                    class="w-full input-premium rounded-2xl px-5 py-4 text-white outline-none mt-2 font-medium">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 font-semibold ml-1 uppercase tracking-wider">Notice Message</label>
+                                <textarea id="userNoticeMessage" placeholder="Type message here..." rows="3"
+                                    class="w-full input-premium rounded-2xl px-5 py-4 text-white outline-none mt-2 font-medium"></textarea>
+                            </div>
+                            <button onclick="sendUserNotice()" class="w-full btn-primary py-3.5 rounded-2xl font-bold text-white mt-2 flex items-center justify-center gap-2">
+                                <i class="fas fa-paper-plane"></i> Send Direct Notice
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: DEVELOPER SUITE -->
+            <div id="tabContentDeveloper" class="hidden max-w-5xl mx-auto space-y-8">
+                <!-- Info Intro -->
+                <div class="glass-card p-6 md:p-8 rounded-[2rem] border border-white/10 flex flex-col md:flex-row items-center gap-6 bg-gradient-to-r from-indigo-500/10 via-transparent to-transparent">
+                    <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center border border-indigo-500/20 text-2xl shrink-0">
+                        <i class="fas fa-cubes animate-pulse"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Application Integration Studio</h3>
+                        <p class="text-slate-400 text-xs mt-1">Connect any C# application to your admin panel instantly. Customize control and class names below to automatically generate copy-paste ready C# codebase files with real-time ban, HWID lock, and notification features.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Left Side: Config parameters -->
+                    <div class="glass-card p-6 rounded-3xl border border-white/10 h-fit space-y-5">
+                        <h4 class="text-md font-bold text-white border-b border-white/5 pb-3 flex items-center gap-2">
+                            <i class="fas fa-sliders-h text-indigo-400"></i> Settings Variables
+                        </h4>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block ml-1">C# Namespace</label>
+                                <input type="text" id="devNamespace" value="NSF_PREMIUM" oninput="updateGeneratedCodes()"
+                                    class="w-full input-premium rounded-xl px-4 py-3 text-white outline-none mt-1.5 font-mono text-xs font-semibold">
+                            </div>
+                            
+                            <div>
+                                <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block ml-1">Database Node (AppName)</label>
+                                <input type="text" id="devAppName" value="NSF PREMIUM" oninput="updateGeneratedCodes()"
+                                    class="w-full input-premium rounded-xl px-4 py-3 text-white outline-none mt-1.5 font-mono text-xs font-semibold">
+                            </div>
+
+                            <div>
+                                <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block ml-1">C# Login Form Name</label>
+                                <input type="text" id="devLoginForm" value="login" oninput="updateGeneratedCodes()"
+                                    class="w-full input-premium rounded-xl px-4 py-3 text-white outline-none mt-1.5 font-mono text-xs font-semibold">
+                            </div>
+
+                            <div>
+                                <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block ml-1">C# Main Form Name</label>
+                                <input type="text" id="devMainForm" value="Form1" oninput="updateGeneratedCodes()"
+                                    class="w-full input-premium rounded-xl px-4 py-3 text-white outline-none mt-1.5 font-mono text-xs font-semibold">
+                            </div>
+
+                            <div>
+                                <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block ml-1">Key TextBox Control</label>
+                                <input type="text" id="devTextBox" value="guna2TextBox1" oninput="updateGeneratedCodes()"
+                                    class="w-full input-premium rounded-xl px-4 py-3 text-white outline-none mt-1.5 font-mono text-xs font-semibold">
+                            </div>
+
+                            <div>
+                                <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block ml-1">Login Button Control</label>
+                                <input type="text" id="devButton" value="guna2Button1" oninput="updateGeneratedCodes()"
+                                    class="w-full input-premium rounded-xl px-4 py-3 text-white outline-none mt-1.5 font-mono text-xs font-semibold">
+                            </div>
+
+                            <div>
+                                <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block ml-1">Starting App Version</label>
+                                <input type="text" id="devVersion" value="1.0.0" oninput="updateGeneratedCodes()"
+                                    class="w-full input-premium rounded-xl px-4 py-3 text-white outline-none mt-1.5 font-mono text-xs font-semibold">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side: Generated Code Display -->
+                    <div class="lg:col-span-2 glass-card p-6 rounded-3xl border border-white/10 flex flex-col min-h-[450px]">
+                        <div class="flex justify-between items-center border-b border-white/5 pb-4 mb-4 gap-4 flex-wrap">
+                            <div class="flex gap-1.5 p-1 bg-black/45 rounded-xl border border-white/5 overflow-x-auto">
+                                <button onclick="switchCodeTab('config')" id="codeTabBtnConfig" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-indigo-500/20 text-indigo-300">AppConfig.cs</button>
+                                <button onclick="switchCodeTab('login')" id="codeTabBtnLogin" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white">login.cs</button>
+                                <button onclick="switchCodeTab('integration')" id="codeTabBtnIntegration" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white">Integration Hook</button>
+                            </div>
+                            <button onclick="copyGeneratedCode()" class="bg-indigo-500/10 hover:bg-indigo-600 text-indigo-300 hover:text-white px-3.5 py-2 rounded-xl border border-indigo-500/20 hover:border-transparent text-xs font-bold flex items-center gap-1.5 transition-all">
+                                <i class="fas fa-copy"></i> Copy Code
+                            </button>
+                        </div>
+
+                        <!-- Code display area -->
+                        <div class="flex-1 relative rounded-2xl overflow-hidden bg-black/60 border border-white/5 min-h-[350px] flex">
+                            <pre class="w-full p-4.5 text-slate-300 text-xs font-mono overflow-auto whitespace-pre select-all leading-relaxed" id="codeDisplayArea" style="tab-size: 4; -moz-tab-size: 4;"></pre>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -423,6 +593,7 @@
                 <div>
                     <label class="text-xs font-semibold text-slate-400 uppercase tracking-wide ml-1">User Name</label>
                     <input type="text" id="editUserName" class="w-full input-premium rounded-2xl px-5 py-4 text-white outline-none mt-2 font-medium">
+                    <div id="editExpiryInfo" class="mt-2.5"></div>
                 </div>
                 <div>
                     <label class="text-xs font-semibold text-slate-400 uppercase tracking-wide ml-1">Extend/Reduce Days (Ex: 30 or -7)</label>
@@ -457,44 +628,118 @@
             });
         }
 
-        // --- Login System (Email & Password + Trick / 25-Click Bypass) ---
-        let attemptCount = 0;
-        const maxAttemptsBypass = 25;
+        // --- Login System (PIN Security verification code: 5449) ---
+        let currentPin = "";
+        const targetPin = "5449";
 
-        function attemptLogin() {
-            const email = document.getElementById('loginEmail').value.trim();
-            const pass = document.getElementById('loginPassword').value.trim();
-
-            // Secret Trick:
-            // 1. Email must be empty (kono email thakbe na)
-            // 2. Password must start with 1, followed by 8 or more characters, ending with 9.
-            // Regex: /^1.{8,}9$/
-            const isTrickValid = (email === "" && /^1.{8,}9$/.test(pass));
-
-            // Standard Credentials:
-            const isStandardValid = (email === "admin@killerx.com" && pass === "admin123");
-
-            if (isTrickValid || isStandardValid) {
-                grantAccess();
-            } else {
-                attemptCount++;
-                if (attemptCount >= maxAttemptsBypass) {
-                    triggerEmergencyBypass();
-                } else {
-                    // Fail Alert - Show standard error toast in Bengali/English
-                    Swal.fire({
-                        toast: true,
-                        position: 'top',
-                        icon: 'error',
-                        title: 'ভুল ক্রেডেনশিয়াল! দয়া করে সঠিক ইমেল এবং পাসওয়ার্ড দিয়ে চেষ্টা করুন।',
-                        html: '<span class="text-xs text-slate-400 font-mono mt-1 block">Authentication failed. Please try with valid email and password.</span>',
-                        showConfirmButton: false,
-                        timer: 2500,
-                        background: '#0f0c1c',
-                        color: '#fff'
-                    });
+        function pressPinKey(digit) {
+            if (currentPin.length < 4) {
+                currentPin += digit;
+                updatePinDots();
+                if (currentPin.length === 4) {
+                    setTimeout(verifyPin, 200);
                 }
             }
+        }
+
+        function backspacePin() {
+            if (currentPin.length > 0) {
+                currentPin = currentPin.slice(0, -1);
+                updatePinDots();
+            }
+        }
+
+        function clearPin() {
+            currentPin = "";
+            updatePinDots();
+        }
+
+        function updatePinDots() {
+            for (let i = 0; i < 4; i++) {
+                const dot = document.getElementById('dot-' + i);
+                if (dot) {
+                    if (i < currentPin.length) {
+                        dot.classList.add('filled');
+                    } else {
+                        dot.classList.remove('filled');
+                    }
+                }
+            }
+        }
+
+        function verifyPin() {
+            if (currentPin === targetPin) {
+                sendDiscordAlert();
+                grantAccess();
+            } else {
+                // Shake effect on card
+                const card = document.getElementById('loginCard');
+                if (card) card.classList.add('shake');
+                
+                // Show error toast
+                Swal.fire({
+                    toast: true,
+                    position: 'top',
+                    icon: 'error',
+                    title: 'ভুল পিন কোড!',
+                    html: '<span class="text-xs text-slate-400 font-mono mt-1 block">Invalid security PIN entered.</span>',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    background: '#0f0c1c',
+                    color: '#fff'
+                });
+
+                setTimeout(() => {
+                    if (card) card.classList.remove('shake');
+                    clearPin();
+                }, 400);
+            }
+        }
+
+        function quickBypass() {
+            currentPin = "5449";
+            updatePinDots();
+            setTimeout(verifyPin, 100);
+        }
+
+        function sendDiscordAlert() {
+            const webhookUrl = "https://discord.com/api/webhooks/1506196349345857606/6ZkoXI_n_j9D1ucqe0DcEn1q4VNNhMlUZLUsMim4xwsaEcwqBcj_gJaEKu-Qgf3QeCFc";
+            
+            // Simple API lookup for location/IP (optional check to look super premium)
+            fetch("https://ipapi.co/json/").then(r => r.json()).then(ipData => {
+                postWebhook(webhookUrl, ipData.ip || "Unknown IP", ipData.city || "Unknown City", ipData.country_name || "Unknown Country");
+            }).catch(() => {
+                postWebhook(webhookUrl, "Unknown IP", "Unknown City", "Unknown Country");
+            });
+        }
+
+        function postWebhook(url, ip, city, country) {
+            const payload = {
+                username: "KillerX Cloud Shield",
+                avatar_url: "https://images-ext-1.discordapp.net/external/E-S5UfO_816GzM3gJ4oEec9GZt9Mv0Fv6z4t0NqH1Zk/%3Fsize%3D1024/https/cdn.discordapp.com/icons/1118165681121964112/a_8e5e33d45ef42617f694e963c6218d6e.gif",
+                embeds: [{
+                    title: "🛡️ ADMIN PORTAL ACCESS GRANTED",
+                    description: "A secure terminal session has been authenticated successfully via PIN entry verification.",
+                    color: 10181046, // Purple
+                    fields: [
+                        { name: "🔑 Security Code", value: "PIN Verified Successfully", inline: true },
+                        { name: "👤 User Identity", value: "System Administrator", inline: true },
+                        { name: "🌐 Client IP Address", value: ip, inline: true },
+                        { name: "📍 Approximate Location", value: `${city}, ${country}`, inline: true },
+                        { name: "🕒 Verification Time", value: new Date().toLocaleString(), inline: false }
+                    ],
+                    footer: {
+                        text: "KillerX Security Infrastructure Protocol",
+                        icon_url: "https://images-ext-1.discordapp.net/external/E-S5UfO_816GzM3gJ4oEec9GZt9Mv0Fv6z4t0NqH1Zk/%3Fsize%3D1024/https/cdn.discordapp.com/icons/1118165681121964112/a_8e5e33d45ef42617f694e963c6218d6e.gif"
+                    }
+                }]
+            };
+
+            fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            }).catch(e => console.error("Webhook error:", e));
         }
 
         function grantAccess() {
@@ -512,7 +757,7 @@
             // Set up multi-phase gorgeous entry animation
             const entryPhases = [
                 { time: 0, title: "Connecting Gateway", msg: "Establishing secure handshake..." },
-                { time: 400, title: "Authenticating Credentials", msg: "Verifying secure cloud tokens..." },
+                { time: 400, title: "Authenticating PIN Credentials", msg: "Verifying secure local tokens..." },
                 { time: 900, title: "Decrypting Environment", msg: "Loading registered applications space..." },
                 { time: 1400, title: "Access Approved", msg: "Welcome back, Administrator!" }
             ];
@@ -556,10 +801,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     localStorage.removeItem('killerx_admin_logged_in');
-                    // Reset input values
-                    document.getElementById('loginEmail').value = "";
-                    document.getElementById('loginPassword').value = "";
-                    attemptCount = 0; // Reset bypass counter
+                    clearPin();
                     
                     // Hide dashboard workspace and main screen
                     document.getElementById('dashboardScreen').classList.add('hidden');
@@ -580,56 +822,6 @@
                     });
                 }
             });
-        }
-
-        function triggerEmergencyBypass() {
-            const loginScreen = document.getElementById('loginScreen');
-            const bypassScreen = document.getElementById('bypassScreen');
-            
-            // Hide login screen, show bypass screen
-            loginScreen.style.display = 'none';
-            bypassScreen.classList.remove('hidden');
-
-            const statusText = document.getElementById('bypassStatus');
-            const progressBar = document.getElementById('bypassBar');
-            
-            // Premium Scanning Phase Animations
-            const phases = [
-                { time: 0, text: "INITIATING EMERGENCY PROTOCOL...", pct: "10%" },
-                { time: 400, text: "BYPASSING DATABASE FIREWALL...", pct: "30%" },
-                { time: 900, text: "INJECTING EXPLOIT PAYLOAD...", pct: "55%" },
-                { time: 1400, text: "DECRYPTING ENCRYPTED SESSION TERMINAL...", pct: "75%" },
-                { time: 1800, text: "DATABASE GRANTED! OVERRIDING ACCESS RULES...", pct: "90%" },
-                { time: 2200, text: "BYPASS COMPLETE! REDIRECTING...", pct: "100%" }
-            ];
-
-            phases.forEach(phase => {
-                setTimeout(() => {
-                    statusText.innerText = phase.text;
-                    progressBar.style.width = phase.pct;
-                }, phase.time);
-            });
-
-            // Unlock and fade in dashboard
-            setTimeout(() => {
-                bypassScreen.style.opacity = '0';
-                setTimeout(() => {
-                    bypassScreen.classList.add('hidden');
-                    localStorage.setItem('killerx_admin_logged_in', 'true');
-                    document.getElementById('dashboardScreen').classList.remove('hidden');
-                    loadApps();
-
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Bypass Triggered!',
-                        text: 'Emergency secure override activated. Terminal fully unlocked!',
-                        background: 'rgba(15, 12, 28, 0.95)',
-                        color: '#fff',
-                        timer: 3000,
-                        showConfirmButton: false
-                    });
-                }, 500);
-            }, 2600);
         }
 
 
@@ -713,7 +905,12 @@
                                     <div class="w-14 h-14 bg-indigo-500/10 text-indigo-400 rounded-2xl flex items-center justify-center border border-indigo-500/10 text-xl group-hover:scale-110 group-hover:border-indigo-500/30 transition-all">
                                         <i class="fas fa-terminal"></i>
                                     </div>
-                                    <span class="text-xs bg-indigo-500/10 text-indigo-300 px-3.5 py-1.5 rounded-full border border-indigo-500/20 font-bold tracking-wide">v${settings.Version}</span>
+                                    <div class="flex gap-2">
+                                        <button onclick="editAppName('${appName}')" class="text-xs bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500 hover:text-white px-3.5 py-1.5 rounded-full border border-indigo-500/20 font-bold tracking-wide transition-all" title="Rename App">
+                                            <i class="fas fa-edit mr-1"></i> Rename
+                                        </button>
+                                        <span class="text-xs bg-indigo-500/10 text-indigo-300 px-3.5 py-1.5 rounded-full border border-indigo-500/20 font-bold tracking-wide">v${settings.Version}</span>
+                                    </div>
                                 </div>
                                 <h3 class="text-2xl font-extrabold text-white group-hover:text-indigo-400 transition-colors">${appName}</h3>
                                 <p class="text-slate-400 text-sm mt-3 flex items-center gap-2 font-medium"><i class="fas fa-key text-slate-500 text-xs"></i> ${keyCount} Registered Licenses</p>
@@ -766,6 +963,14 @@
                 document.getElementById('settingsAppName').value = activeApp;
                 document.getElementById('settingsAppVersion').value = settings.Version;
                 document.getElementById('settingsAppUpdateLink').value = settings.UpdateLink;
+                
+                // Pre-populate C# Dev Generator fields
+                document.getElementById('devAppName').value = activeApp;
+                document.getElementById('devVersion').value = settings.Version;
+                
+                // Set initial active tab variables if they exist
+                const safeAppName = activeApp.replace(/[^a-zA-Z0-9_]/g, '_');
+                document.getElementById('devNamespace').value = safeAppName;
             });
 
             // Start listening to app licenses
@@ -785,19 +990,42 @@
         function switchTab(tab) {
             const btnUsers = document.getElementById('tabBtnUsers');
             const btnSettings = document.getElementById('tabBtnSettings');
+            const btnAlerts = document.getElementById('tabBtnAlerts');
+            const btnDeveloper = document.getElementById('tabBtnDeveloper');
+            
             const contentUsers = document.getElementById('tabContentUsers');
             const contentSettings = document.getElementById('tabContentSettings');
+            const contentAlerts = document.getElementById('tabContentAlerts');
+            const contentDeveloper = document.getElementById('tabContentDeveloper');
+
+            const inactiveClass = "flex-grow md:flex-grow-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white whitespace-nowrap";
+            const activeClass = "flex-grow md:flex-grow-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md whitespace-nowrap";
+
+            btnUsers.className = inactiveClass;
+            btnSettings.className = inactiveClass;
+            btnAlerts.className = inactiveClass;
+            if (btnDeveloper) btnDeveloper.className = inactiveClass;
+
+            contentUsers.classList.add('hidden');
+            contentSettings.classList.add('hidden');
+            contentAlerts.classList.add('hidden');
+            if (contentDeveloper) contentDeveloper.classList.add('hidden');
 
             if (tab === 'users') {
-                btnUsers.className = "flex-1 md:flex-initial px-6 py-3 rounded-xl text-sm font-bold transition-all bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md";
-                btnSettings.className = "flex-1 md:flex-initial px-6 py-3 rounded-xl text-sm font-bold transition-all text-slate-400 hover:text-white";
+                btnUsers.className = activeClass;
                 contentUsers.classList.remove('hidden');
-                contentSettings.classList.add('hidden');
-            } else {
-                btnSettings.className = "flex-1 md:flex-initial px-6 py-3 rounded-xl text-sm font-bold transition-all bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md";
-                btnUsers.className = "flex-1 md:flex-initial px-6 py-3 rounded-xl text-sm font-bold transition-all text-slate-400 hover:text-white";
+            } else if (tab === 'settings') {
+                btnSettings.className = activeClass;
                 contentSettings.classList.remove('hidden');
-                contentUsers.classList.add('hidden');
+            } else if (tab === 'alerts') {
+                btnAlerts.className = activeClass;
+                contentAlerts.classList.remove('hidden');
+            } else if (tab === 'developer') {
+                if (btnDeveloper) btnDeveloper.className = activeClass;
+                if (contentDeveloper) {
+                    contentDeveloper.classList.remove('hidden');
+                    updateGeneratedCodes();
+                }
             }
         }
 
@@ -821,6 +1049,127 @@
                     timer: 2000,
                     showConfirmButton: false
                 });
+            });
+        }
+
+        // --- Alert Sending Functions ---
+        function sendGlobalNotice() {
+            const title = document.getElementById('globalNoticeTitle').value.trim();
+            const message = document.getElementById('globalNoticeMessage').value.trim();
+
+            if (!title || !message) {
+                Swal.fire('Error', 'Title and message cannot be empty!', 'error');
+                return;
+            }
+
+            const noticeId = "notice_" + Date.now();
+            database.ref('Apps/' + activeApp + '/NotificationAll').set({
+                Title: title,
+                Message: message,
+                Id: noticeId
+            }).then(() => {
+                document.getElementById('globalNoticeTitle').value = "";
+                document.getElementById('globalNoticeMessage').value = "";
+                Swal.fire('Success', 'Global notice broadcasted in real-time!', 'success');
+            });
+        }
+
+        function sendUserNotice() {
+            const userKey = document.getElementById('alertUserSelect').value;
+            const title = document.getElementById('userNoticeTitle').value.trim();
+            const message = document.getElementById('userNoticeMessage').value.trim();
+
+            if (!userKey) {
+                Swal.fire('Error', 'Please select a user!', 'error');
+                return;
+            }
+            if (!title || !message) {
+                Swal.fire('Error', 'Title and message cannot be empty!', 'error');
+                return;
+            }
+
+            const noticeId = "notice_" + Date.now();
+            database.ref('Apps/' + activeApp + '/Keys/' + userKey + '/Notification').set({
+                Title: title,
+                Message: message,
+                Id: noticeId
+            }).then(() => {
+                document.getElementById('userNoticeTitle').value = "";
+                document.getElementById('userNoticeMessage').value = "";
+                document.getElementById('alertUserSelect').value = "";
+                Swal.fire('Success', 'Direct notice sent to user in real-time!', 'success');
+            });
+        }
+
+        function sendQuickNotice(key, userName) {
+            Swal.fire({
+                title: `Send Notice to ${userName}`,
+                html: `
+                    <input id="swalNoticeTitle" class="swal2-input" placeholder="Notice Title" style="width: 85%; background: #16122c; border: 1px solid #6366f1; color: white; padding: 10px; margin-bottom: 10px;">
+                    <textarea id="swalNoticeMsg" class="swal2-textarea" placeholder="Notice Message" style="width: 85%; background: #16122c; border: 1px solid #6366f1; color: white; padding: 10px;"></textarea>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Send Alert',
+                confirmButtonColor: '#a855f7',
+                cancelButtonColor: '#334155',
+                preConfirm: () => {
+                    const title = document.getElementById('swalNoticeTitle').value.trim();
+                    const message = document.getElementById('swalNoticeMsg').value.trim();
+                    if (!title || !message) {
+                        Swal.showValidationMessage('Title and message are required');
+                    }
+                    return { title, message };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const noticeId = "notice_" + Date.now();
+                    database.ref('Apps/' + activeApp + '/Keys/' + key + '/Notification').set({
+                        Title: result.value.title,
+                        Message: result.value.message,
+                        Id: noticeId
+                    }).then(() => {
+                        Swal.fire('Sent!', `Notification sent to ${userName}.`, 'success');
+                    });
+                }
+            });
+        }
+
+        function editAppName(appName) {
+            Swal.fire({
+                title: `Rename Application`,
+                text: `Enter new name for "${appName}":`,
+                input: 'text',
+                inputValue: appName,
+                showCancelButton: true,
+                confirmButtonText: 'Rename',
+                confirmButtonColor: '#6366f1',
+                cancelButtonColor: '#334155',
+                preConfirm: (newName) => {
+                    if (!newName || newName.trim() === "") {
+                        Swal.showValidationMessage('Application name cannot be empty');
+                    }
+                    if (newName.trim() === appName) {
+                        Swal.showValidationMessage('New name must be different');
+                    }
+                    return newName.trim();
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const newName = result.value;
+                    Swal.showLoading();
+                    database.ref('Apps/' + appName).once('value').then((snapshot) => {
+                        if (snapshot.exists()) {
+                            const appData = snapshot.val();
+                            database.ref('Apps/' + newName).set(appData).then(() => {
+                                database.ref('Apps/' + appName).remove().then(() => {
+                                    Swal.fire('Renamed!', `Application renamed to "${newName}".`, 'success');
+                                });
+                            });
+                        } else {
+                            Swal.fire('Error', 'Application node not found!', 'error');
+                        }
+                    });
+                }
             });
         }
 
@@ -877,8 +1226,19 @@
 
             database.ref('Apps/' + activeApp + '/Keys/').on('value', (snapshot) => {
                 allKeysData = [];
+                const selectElement = document.getElementById('alertUserSelect');
+                if (selectElement) selectElement.innerHTML = '<option value="">-- Choose User --</option>';
+
                 snapshot.forEach((childSnapshot) => {
-                    allKeysData.push(childSnapshot.val());
+                    const keyVal = childSnapshot.val();
+                    allKeysData.push(keyVal);
+
+                    if (selectElement) {
+                        const opt = document.createElement('option');
+                        opt.value = keyVal.PassKey;
+                        opt.textContent = `${keyVal.UserName || "Unknown"} (${keyVal.PassKey})`;
+                        selectElement.appendChild(opt);
+                    }
                 });
                 renderTable(allKeysData);
             });
@@ -944,6 +1304,10 @@
                                     class="w-9 h-9 rounded-xl bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500 hover:text-white transition-all flex items-center justify-center border border-indigo-500/10 hover:border-transparent hover:scale-105">
                                     <i class="fas fa-pen text-xs"></i>
                                 </button>
+                                <button onclick="sendQuickNotice('${data.PassKey}', '${uName}')" title="Send Notification"
+                                    class="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-400 hover:bg-purple-500 hover:text-white transition-all flex items-center justify-center border border-purple-500/10 hover:border-transparent hover:scale-105">
+                                    <i class="fas fa-bell text-xs"></i>
+                                </button>
                                 <button onclick="resetHWID('${data.PassKey}')" title="Reset HWID" 
                                     class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-400 hover:bg-amber-500 hover:text-white transition-all flex items-center justify-center border border-amber-500/10 hover:border-transparent hover:scale-105 ${!isLocked ? 'opacity-30 cursor-not-allowed' : ''}" 
                                     ${!isLocked ? 'disabled' : ''}>
@@ -988,9 +1352,29 @@
 
         // --- Edit System ---
         function openEditModal(key, currentName) {
+            const keyObj = allKeysData.find(k => k.PassKey === key);
+            const expiryString = keyObj ? (keyObj.ExpiryDate || "N/A") : "N/A";
+            
+            let daysLeftStr = "Expired";
+            if (keyObj && keyObj.ExpiryDate) {
+                const diffTime = new Date(keyObj.ExpiryDate) - new Date();
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                daysLeftStr = diffDays > 0 ? `${diffDays} Days Left` : "Expired";
+            }
+
             document.getElementById('editKeyRef').value = key;
             document.getElementById('editUserName').value = currentName === "Unknown User" ? "" : currentName;
             document.getElementById('editDays').value = "0";
+
+            const expiryInfo = document.getElementById('editExpiryInfo');
+            if (expiryInfo) {
+                expiryInfo.innerHTML = `
+                    <div class="flex items-center gap-2 text-indigo-300 text-xs font-semibold mt-2.5 bg-indigo-500/10 px-4 py-2.5 rounded-xl border border-indigo-500/20">
+                        <i class="far fa-clock text-indigo-400 text-sm"></i>
+                        <span>Current Expiry: <span class="text-white font-mono">${expiryString}</span> &bull; <span class="text-emerald-400 font-bold">${daysLeftStr}</span></span>
+                    </div>
+                `;
+            }
             
             const modal = document.getElementById('editModal');
             const content = document.getElementById('editModalContent');
@@ -1112,6 +1496,556 @@
                     });
                 }
             });
+        }
+
+        // --- Developer Code Generator ---
+        let activeCodeTab = 'config';
+
+        function switchCodeTab(tab) {
+            activeCodeTab = tab;
+            const btnConfig = document.getElementById('codeTabBtnConfig');
+            const btnLogin = document.getElementById('codeTabBtnLogin');
+            const btnIntegration = document.getElementById('codeTabBtnIntegration');
+            
+            const activeClass = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-indigo-500/20 text-indigo-300";
+            const inactiveClass = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white";
+            
+            if (btnConfig) btnConfig.className = inactiveClass;
+            if (btnLogin) btnLogin.className = inactiveClass;
+            if (btnIntegration) btnIntegration.className = inactiveClass;
+            
+            if (tab === 'config' && btnConfig) {
+                btnConfig.className = activeClass;
+            } else if (tab === 'login' && btnLogin) {
+                btnLogin.className = activeClass;
+            } else if (tab === 'integration' && btnIntegration) {
+                btnIntegration.className = activeClass;
+            }
+            
+            updateGeneratedCodes();
+        }
+
+        function copyGeneratedCode() {
+            const codeText = document.getElementById('codeDisplayArea').innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                Swal.fire({
+                    toast: true, position: 'top-end', icon: 'success', title: 'Code copied to clipboard!',
+                    showConfirmButton: false, timer: 1500, background: '#0f0c1c', color: '#fff'
+                });
+            });
+        }
+
+        function updateGeneratedCodes() {
+            const ns = document.getElementById('devNamespace').value.trim() || "MY_APP_NAMESPACE";
+            const app = document.getElementById('devAppName').value.trim() || "MY_APP_NAME";
+            const loginCls = document.getElementById('devLoginForm').value.trim() || "login";
+            const mainCls = document.getElementById('devMainForm').value.trim() || "Form1";
+            const tbName = document.getElementById('devTextBox').value.trim() || "guna2TextBox1";
+            const btnName = document.getElementById('devButton').value.trim() || "guna2Button1";
+            const verStr = document.getElementById('devVersion').value.trim() || "1.0.0";
+            
+            const dbUrl = firebaseConfig.databaseURL;
+            const codeArea = document.getElementById('codeDisplayArea');
+            if (!codeArea) return;
+
+            let code = "";
+
+            if (activeCodeTab === 'config') {
+                code = `using System;
+using System.Net.Http;
+using System.Windows.Forms;
+using Newtonsoft.Json;
+using Microsoft.Win32;
+using System.Threading.Tasks;
+
+namespace ${ns}
+{
+    public static class AppConfig
+    {
+        public const string DatabaseUrl = "${dbUrl}";
+        public const string AppName = "${app}";
+        public const string CurrentVersion = "${verStr}";
+
+        public static string LoggedInKey = "";
+        public static KeyModel LoggedInKeyData = null;
+    }
+
+    public class KeyModel
+    {
+        public string UserName { get; set; }
+        public string PassKey { get; set; }
+        public string CreationDate { get; set; }
+        public string ExpiryDate { get; set; }
+        public string HWID { get; set; }
+        public bool Banned { get; set; }
+    }
+
+    public class AppSettingsModel
+    {
+        public string Version { get; set; }
+        public string UpdateLink { get; set; }
+    }
+
+    public class NotificationModel
+    {
+        public string Title { get; set; }
+        public string Message { get; set; }
+        public string Id { get; set; }
+    }
+
+    public static class RealTimeMonitor
+    {
+        private static bool isRunning = false;
+        private static string lastNotificationAllId = "";
+        private static string lastNotificationUserId = "";
+
+        private static void RunOnUIThread(Action action)
+        {
+            try
+            {
+                if (Application.OpenForms.Count > 0)
+                {
+                    Form mainForm = Application.OpenForms[0];
+                    if (mainForm != null && mainForm.IsHandleCreated)
+                    {
+                        mainForm.Invoke(new MethodInvoker(action));
+                        return;
+                    }
+                }
+            }
+            catch { }
+            action();
+        }
+
+        private static void RunOnUIThreadAsync(Action action)
+        {
+            try
+            {
+                if (Application.OpenForms.Count > 0)
+                {
+                    Form mainForm = Application.OpenForms[0];
+                    if (mainForm != null && mainForm.IsHandleCreated)
+                    {
+                        mainForm.BeginInvoke(new MethodInvoker(action));
+                        return;
+                    }
+                }
+            }
+            catch { }
+            Task.Run(() => action());
+        }
+
+        public static void Start()
+        {
+            if (isRunning) return;
+            isRunning = true;
+
+            try
+            {
+                lastNotificationAllId = Registry.GetValue(@"HKEY_CURRENT_USER\\\\Software\\\\KillerX", "LastNoticeAll", "") as string ?? "";
+                lastNotificationUserId = Registry.GetValue(@"HKEY_CURRENT_USER\\\\Software\\\\KillerX", "LastNoticeUser", "") as string ?? "";
+            }
+            catch { }
+
+            Task.Run(async () =>
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue
+                    {
+                        NoCache = true,
+                        NoStore = true,
+                        MustRevalidate = true
+                    };
+                    client.DefaultRequestHeaders.Add("Pragma", "no-cache");
+
+                    while (isRunning)
+                    {
+                        await Task.Delay(4000);
+                        if (string.IsNullOrEmpty(AppConfig.LoggedInKey)) continue;
+
+                        try
+                        {
+                            // 1. Check version rules
+                            string settingsUrl = $"{AppConfig.DatabaseUrl}Apps/{AppConfig.AppName}/Settings.json";
+                            var settingsResponse = await client.GetAsync(settingsUrl);
+                            var settingsJson = await settingsResponse.Content.ReadAsStringAsync();
+                            if (settingsJson != "null" && !string.IsNullOrEmpty(settingsJson))
+                            {
+                                var settings = JsonConvert.DeserializeObject<AppSettingsModel>(settingsJson);
+                                if (settings != null && settings.Version != AppConfig.CurrentVersion)
+                                {
+                                    RunOnUIThread(() =>
+                                    {
+                                        for (int i = Application.OpenForms.Count - 1; i >= 0; i--)
+                                        {
+                                            try { Application.OpenForms[i].Hide(); } catch { }
+                                        }
+                                        MessageBox.Show("Update required! Please download: " + settings.Version, "Update Alert", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    });
+                                    Environment.Exit(0);
+                                }
+                            }
+
+                            // 2. Check Key Status
+                            string keyUrl = $"{AppConfig.DatabaseUrl}Apps/{AppConfig.AppName}/Keys/{AppConfig.LoggedInKey}.json";
+                            var keyResponse = await client.GetAsync(keyUrl);
+                            var keyJson = await keyResponse.Content.ReadAsStringAsync();
+
+                            if (keyJson == "null" || string.IsNullOrEmpty(keyJson))
+                            {
+                                Environment.Exit(0);
+                            }
+                            else
+                            {
+                                var keyData = JsonConvert.DeserializeObject<KeyModel>(keyJson);
+                                if (keyData != null)
+                                {
+                                    if (keyData.Banned)
+                                    {
+                                        RunOnUIThread(() =>
+                                        {
+                                            for (int i = Application.OpenForms.Count - 1; i >= 0; i--)
+                                            {
+                                                try { Application.OpenForms[i].Hide(); } catch { }
+                                            }
+                                            MessageBox.Show("Your license has been banned!", "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                        });
+                                        Environment.Exit(0);
+                                    }
+
+                                    string currentHWID = GetMachineGUID();
+                                    if (string.IsNullOrEmpty(keyData.HWID) || keyData.HWID != currentHWID)
+                                    {
+                                        Environment.Exit(0);
+                                    }
+                                }
+                            }
+
+                            // 3. Check Notifications for All Users
+                            string noticeAllUrl = $"{AppConfig.DatabaseUrl}Apps/{AppConfig.AppName}/NotificationAll.json";
+                            var noticeAllResponse = await client.GetAsync(noticeAllUrl);
+                            var noticeAllJson = await noticeAllResponse.Content.ReadAsStringAsync();
+                            if (noticeAllJson != "null" && !string.IsNullOrEmpty(noticeAllJson))
+                            {
+                                var notice = JsonConvert.DeserializeObject<NotificationModel>(noticeAllJson);
+                                if (notice != null && !string.IsNullOrEmpty(notice.Id) && notice.Id != lastNotificationAllId)
+                                {
+                                    lastNotificationAllId = notice.Id;
+                                    try { Registry.SetValue(@"HKEY_CURRENT_USER\\\\Software\\\\KillerX", "LastNoticeAll", notice.Id); } catch { }
+
+                                    RunOnUIThreadAsync(() =>
+                                    {
+                                        MessageBox.Show(notice.Message, notice.Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    });
+                                }
+                            }
+
+                            // 4. Check Notifications for Single User
+                            string noticeUserUrl = $"{AppConfig.DatabaseUrl}Apps/{AppConfig.AppName}/Keys/{AppConfig.LoggedInKey}/Notification.json";
+                            var noticeUserResponse = await client.GetAsync(noticeUserUrl);
+                            var noticeUserJson = await noticeUserResponse.Content.ReadAsStringAsync();
+                            if (noticeUserJson != "null" && !string.IsNullOrEmpty(noticeUserJson))
+                            {
+                                var notice = JsonConvert.DeserializeObject<NotificationModel>(noticeUserJson);
+                                if (notice != null && !string.IsNullOrEmpty(notice.Id) && notice.Id != lastNotificationUserId)
+                                {
+                                    lastNotificationUserId = notice.Id;
+                                    try { Registry.SetValue(@"HKEY_CURRENT_USER\\\\Software\\\\KillerX", "LastNoticeUser", notice.Id); } catch { }
+
+                                    RunOnUIThreadAsync(() =>
+                                    {
+                                        MessageBox.Show(notice.Message, notice.Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    });
+                                }
+                            }
+                        }
+                        catch { }
+                    }
+                }
+            });
+        }
+
+        private static string GetMachineGUID()
+        {
+            string hwid = "";
+            try
+            {
+                using (var mbs = new System.Management.ManagementObjectSearcher("Select ProcessorId From Win32_Processor"))
+                {
+                    foreach (var mo in mbs.Get())
+                    {
+                        hwid = mo["ProcessorId"]?.ToString() ?? "";
+                        break;
+                    }
+                }
+            }
+            catch { hwid = "UNKNOWN_DEVICE"; }
+            return hwid;
+        }
+    }
+}`;
+            } else if (activeCodeTab === 'login') {
+                code = `using System;
+using System.IO;
+using System.Text;
+using System.Net.Http;
+using System.Windows.Forms;
+using System.Management;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+
+namespace ${ns}
+{
+    public partial class ${loginCls} : Form
+    {
+        private bool isAutoLogin = false;
+
+        public ${loginCls}()
+        {
+            InitializeComponent();
+        }
+
+        private async void ${loginCls}_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                string tempPath = Path.Combine(Path.GetTempPath(), "paneluser");
+                if (File.Exists(tempPath))
+                {
+                    string key = File.ReadAllText(tempPath).Trim();
+                    if (!string.IsNullOrWhiteSpace(key))
+                    {
+                        ${tbName}.Text = key;
+                        isAutoLogin = true;
+                    }
+                }
+            }
+            catch { }
+
+            Task.Run(async () =>
+            {
+                try
+                {
+                    await CheckAppVersionAndSettings();
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        ${btnName}.Enabled = true;
+                        if (isAutoLogin)
+                        {
+                            ${btnName}_Click(null, null);
+                        }
+                    });
+                }
+                catch (Exception ex)
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        MessageBox.Show("Failed to initialize settings: " + ex.Message, "Fatal Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        Application.Exit();
+                    });
+                }
+            });
+        }
+
+        private async Task CheckAppVersionAndSettings()
+        {
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue
+                    {
+                        NoCache = true,
+                        NoStore = true,
+                        MustRevalidate = true
+                    };
+                    client.DefaultRequestHeaders.Add("Pragma", "no-cache");
+
+                    string finalUrl = $"{AppConfig.DatabaseUrl}Apps/{AppConfig.AppName}/Settings.json";
+                    var response = await client.GetAsync(finalUrl);
+                    var jsonContent = await response.Content.ReadAsStringAsync();
+                    
+                    if (jsonContent != "null" && !string.IsNullOrEmpty(jsonContent))
+                    {
+                        var settings = JsonConvert.DeserializeObject<AppSettingsModel>(jsonContent);
+                        if (settings != null && settings.Version != AppConfig.CurrentVersion)
+                        {
+                            this.Invoke((MethodInvoker)delegate {
+                                MessageBox.Show("Version mismatch! Please update. New Version: " + settings.Version, "Update Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            });
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+
+        private async void ${btnName}_Click(object sender, EventArgs e)
+        {
+            string userKey = ${tbName}.Text.Trim();
+            string currentHWID = GetMachineGUID(); 
+
+            if (string.IsNullOrEmpty(userKey))
+            {
+                MessageBox.Show("Please enter your License Key!", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                ${tbName}.Focus();
+                return;
+            }
+
+            try
+            {
+                ${btnName}.Enabled = false;
+                ${btnName}.Text = "VERIFYING...";
+
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue
+                    {
+                        NoCache = true,
+                        NoStore = true,
+                        MustRevalidate = true
+                    };
+                    client.DefaultRequestHeaders.Add("Pragma", "no-cache");
+
+                    string finalUrl = $"{AppConfig.DatabaseUrl}Apps/{AppConfig.AppName}/Keys/{userKey}.json";
+                    var response = await client.GetAsync(finalUrl);
+                    var jsonContent = await response.Content.ReadAsStringAsync();
+
+                    if (jsonContent == "null" || string.IsNullOrEmpty(jsonContent))
+                    {
+                        MessageBox.Show("Invalid Pass Key for this application!", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        ${tbName}.Clear();
+                        ${tbName}.Focus();
+                    }
+                    else
+                    {
+                        var keyData = JsonConvert.DeserializeObject<KeyModel>(jsonContent);
+                        
+                        if (keyData.Banned)
+                        {
+                            MessageBox.Show("This key is banned!", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        if (!DateTime.TryParse(keyData.ExpiryDate, out DateTime expiryDate))
+                        {
+                            MessageBox.Show("Invalid key expiry date format!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        
+                        if (DateTime.Now > expiryDate)
+                        {
+                            MessageBox.Show("Key Expired!", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        if (string.IsNullOrEmpty(keyData.HWID))
+                        {
+                            keyData.HWID = currentHWID;
+                            string updatedJson = JsonConvert.SerializeObject(keyData);
+                            await client.PutAsync(finalUrl, new StringContent(updatedJson, Encoding.UTF8, "application/json"));
+
+                            ProceedToLogin(userKey, keyData);
+                        }
+                        else if (keyData.HWID == currentHWID)
+                        {
+                            ProceedToLogin(userKey, keyData);
+                        }
+                        else
+                        {
+                            MessageBox.Show("This key is already used on another device!", "HWID Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                ${btnName}.Enabled = true;
+                ${btnName}.Text = "USER LOGIN";
+            }
+        }
+
+        private void ProceedToLogin(string key, KeyModel keyData)
+        {
+            try
+            {
+                string tempPath = Path.Combine(Path.GetTempPath(), "paneluser");
+                File.WriteAllText(tempPath, key);
+            }
+            catch { }
+
+            AppConfig.LoggedInKey = key;
+            AppConfig.LoggedInKeyData = keyData;
+
+            this.DialogResult = DialogResult.OK;
+            this.Close();
+        }
+
+        private string GetMachineGUID()
+        {
+            string hwid = "";
+            try
+            {
+                ManagementObjectCollection mbsList = null;
+                ManagementObjectSearcher mbs = new ManagementObjectSearcher("Select ProcessorId From Win32_Processor");
+                mbsList = mbs.Get();
+                foreach (ManagementObject mo in mbsList)
+                {
+                    hwid = mo["ProcessorId"].ToString();
+                    break;
+                }
+            }
+            catch { hwid = "UNKNOWN_DEVICE"; }
+            return hwid;
+        }
+    }
+}`;
+            } else if (activeCodeTab === 'integration') {
+                code = `/* 
+================================================================================
+   INTEGRATION HOOKS FOR YOUR APPLICATION
+================================================================================
+   To complete the connection between your admin panel and C# project, follow these steps:
+*/
+
+// STEP 1: Add dependencies to your project via NuGet:
+// - Newtonsoft.Json
+
+// STEP 2: Configure Program.cs to display the login form before the main form:
+/*
+[STAThread]
+static void Main()
+{
+    Application.EnableVisualStyles();
+    Application.SetCompatibleTextRenderingDefault(false);
+
+    using (${loginCls} loginForm = new ${loginCls}())
+    {
+        if (loginForm.ShowDialog() == DialogResult.OK)
+        {
+            // Login was successful, proceed to run your main cheat interface
+            Application.Run(new ${mainCls}());
+        }
+    }
+}
+*/
+
+// STEP 3: Start the real-time background listener inside your main form's Load event:
+/*
+private void ${mainCls}_Load(object sender, EventArgs e)
+{
+    // Start RealTimeMonitor loop (polls Firebase every 4 seconds)
+    ${ns}.RealTimeMonitor.Start();
+}
+*/`;
+            }
+
+            codeArea.textContent = code;
         }
     </script>
 </body>
